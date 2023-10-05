@@ -19,7 +19,7 @@ namespace IsbaSatisBlazor.Client.Pages.PageProcess
         [Inject]
         ILocalStorageService localStorageService { get; set; }
 
-        protected List<UserDTO> UserList = new List<UserDTO>();
+        protected IEnumerable<UserDTO> UserList;
 
 
         protected async override Task OnInitializedAsync()
@@ -60,6 +60,7 @@ namespace IsbaSatisBlazor.Client.Pages.PageProcess
                 await ModalManager.ShowMessageAsync("An Error", ex.Message);
             }
         }
+
 
         protected async Task LoadList()
         {

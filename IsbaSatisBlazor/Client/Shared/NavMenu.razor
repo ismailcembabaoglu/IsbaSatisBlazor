@@ -1,72 +1,43 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">Isba satis</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-</div>
+﻿
+<RadzenHeader>
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+        <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" />
+        <RadzenLabel Text="İsba Yazılım A.Ş" />
+    </RadzenStack>
+</RadzenHeader>
+<RadzenSidebar Style="width:auto">
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
+    <AuthorizeView>
 
-        <AuthorizeView>
-
-            <Authorized>
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                        <span class="oi oi-home" aria-hidden="true"></span> Home
-                    </NavLink>
-                </li>
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="counter">
-                        <span class="oi oi-plus" aria-hidden="true"></span> Counter
-                    </NavLink>
-                </li>
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="orders/list">
-                        <span class="oi oi-grid-three-up" aria-hidden="true"></span> Orders
-                    </NavLink>
-                </li>
-
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="suppliers/list">
-                        <span class="oi oi-basket" aria-hidden="true"></span> Suppliers
-                    </NavLink>
-                </li>
+        <Authorized>
 
 
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="userlist">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> User List
-                    </NavLink>
-                </li>
+            <RadzenPanelMenu DisplayStyle="@(sidebar1Expanded?MenuItemDisplayStyle.IconAndText:MenuItemDisplayStyle.Icon)" ShowArrow=false>
+                <RadzenPanelMenuItem Text="Anasayfa" Path="/" Icon="home" />
+                <RadzenPanelMenuItem Text="Kullanıcı Listesi" Path="/userlist" Icon="account_circle" />
+                <RadzenPanelMenuItem Text="Çıkış Yap" Path="/logout" Icon="input" />
+               @*  <RadzenPanelMenuItem Text="UI Fundamentals" Icon="auto_awesome">
+                    <RadzenPanelMenuItem Text="Themes" Icon="color_lens" />
+                    <RadzenPanelMenuItem Text="Colors" Icon="invert_colors" />
+                </RadzenPanelMenuItem> *@
+            </RadzenPanelMenu>
 
 
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="logout">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> Logout
-                    </NavLink>
-                </li>
+        </Authorized>
 
-            </Authorized>
+        <NotAuthorized>
+            <RadzenPanelMenuItem Text="Dashboard" Path="/login" Icon="dashboard" />
+        </NotAuthorized>
 
-            <NotAuthorized>
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="login">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> Login
-                    </NavLink>
-                </li>
-            </NotAuthorized>
-
-        </AuthorizeView>
+    </AuthorizeView>
+</RadzenSidebar>
 
 
 
 
-
-    </ul>
-</div>
 
 @code {
+    bool sidebar1Expanded = true;
     private bool collapseNavMenu = true;
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
