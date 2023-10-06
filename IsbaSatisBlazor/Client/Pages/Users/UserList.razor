@@ -1,31 +1,42 @@
 ﻿@page "/userlist"
 @inherits UserListProcess
 
-<div class="btn-group">
-    <AddNewButtonComponent Caption="Create User" OnClick="goCreateUserPage" />
-    <button onclick="@goCreateUserPage" class="btn btn-success">sadsad</button>
 
-</div>
 
 
 @if (UserList != null)
 {
+   
+    <RadzenButton Shade="Shade.Dark" Click=goCreateUserPage Icon="add" Variant="Variant.Flat" Text="Yeni Kullanıcı Ekle" ButtonStyle="ButtonStyle.Success" />
     <RadzenDataGrid AllowFiltering="true"
+        ShowCellDataAsTooltip="true"
+                        ColumnWidth="200px"
                     FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                     AllowColumnPicking="true"
                     AllowPaging="true" PageSize="10"
                     AllowSorting="true" Data="@UserList"
                     TItem="UserDTO">
         <Columns>
-            <RadzenDataGridColumn TItem="UserDTO" Property="Id" Title="Id" />
+            <RadzenDataGridColumn TItem="UserDTO" Context="user" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
+                <Template Context="user">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(() => goUpdateUserPage(user.Id))">
+                    </RadzenButton>
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(() => DeleteUser(user.Id))">
+                    </RadzenButton>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="UserDTO" Property="Id" Title="Id">
+            </RadzenDataGridColumn>
+
             <RadzenDataGridColumn TItem="UserDTO" Property="FullName" Title="Adı Soyadı" />
             <RadzenDataGridColumn TItem="UserDTO" Property="EMailAddress" Title="Email Adresi" />
-            <RadzenDataGridColumn TItem="UserDTO" Property="CreateDate" Title="Kayıt Tarihi" >  
+            <RadzenDataGridColumn TItem="UserDTO" Property="CreateDate" Title="Kayıt Tarihi">
             </RadzenDataGridColumn>
-        
+
             <RadzenDataGridColumn TItem="UserDTO" Property="IsActive" Title="Durumu" />
         </Columns>
     </RadzenDataGrid>
+
 }
 
 

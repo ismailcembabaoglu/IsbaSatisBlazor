@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IsbaSatisBlazor.Data.Models.BaseModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,13 +8,8 @@ using System.Threading.Tasks;
 
 namespace IsbaSatisBlazor.Data.Models
 {
-    public class Users
+    public class Users:ModelBase
     {
-       
-        public Guid Id { get; set; }
-
-        public DateTime CreateDate { get; set; }
-
         public string FirstName { get; set; }
 
         public string LastName { get; set; }

@@ -1,17 +1,20 @@
 ﻿
 <RadzenHeader>
+
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
-        <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" />
+        <RadzenSidebarToggle Click="ToggleNavMenu" />
         <RadzenLabel Text="İsba Yazılım A.Ş" />
     </RadzenStack>
 </RadzenHeader>
+
 <RadzenSidebar Style="width:auto">
+
 
     <AuthorizeView>
 
         <Authorized>
 
-
+               <RadzenSidebar @bind-Expanded="@sidebar2Expanded">
             <RadzenPanelMenu DisplayStyle="@(sidebar1Expanded?MenuItemDisplayStyle.IconAndText:MenuItemDisplayStyle.Icon)" ShowArrow=false>
                 <RadzenPanelMenuItem Text="Anasayfa" Path="/" Icon="home" />
                 <RadzenPanelMenuItem Text="Kullanıcı Listesi" Path="/userlist" Icon="account_circle" />
@@ -21,6 +24,7 @@
                     <RadzenPanelMenuItem Text="Colors" Icon="invert_colors" />
                 </RadzenPanelMenuItem> *@
             </RadzenPanelMenu>
+               </RadzenSidebar >
 
 
         </Authorized>
@@ -39,12 +43,14 @@
 @code {
     bool sidebar1Expanded = true;
     private bool collapseNavMenu = true;
+    bool sidebar2Expanded = true;
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
     private void ToggleNavMenu()
     {
-        collapseNavMenu = !collapseNavMenu;
+        sidebar2Expanded = !sidebar2Expanded;
     }
+
 }
 
