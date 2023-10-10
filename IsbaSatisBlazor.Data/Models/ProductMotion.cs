@@ -16,12 +16,12 @@ namespace IsbaSatisBlazor.Data.Models
         public decimal UnitPrice { get; set; }
         public decimal SupplementaryMaterialPrice { get; set; }
         public decimal SupplementaryMaterialUnitPrice { get { return UnitPrice + SupplementaryMaterialPrice; } }
-        public decimal Indirim { get; set; }
-        public decimal ToplamTutar
+        public decimal Sale { get; set; }
+        public decimal TotalPrice
         {
             get
             {
-                return (Amount * SupplementaryMaterialUnitPrice) - ((Amount * SupplementaryMaterialUnitPrice) / 100 * Indirim);
+                return (Amount * SupplementaryMaterialUnitPrice) - ((Amount * SupplementaryMaterialUnitPrice) / 100 * Sale);
             }
         }
         public Guid ProductId { get; set; }

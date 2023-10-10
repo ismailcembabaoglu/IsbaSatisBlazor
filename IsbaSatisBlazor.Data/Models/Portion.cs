@@ -11,7 +11,7 @@ namespace IsbaSatisBlazor.Data.Models
     {
         public string Name { get; set; }
         public decimal Price { get; set; }
-        public decimal EkMalzemeCarpan { get; set; }
+        public decimal SupplementaryMaterialMultiplier { get; set; }
         public Guid ProductId { get; set; }
         public virtual Product? Product { get; set; }
         public Guid UnitId { get; set; }

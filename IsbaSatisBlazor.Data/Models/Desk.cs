@@ -9,7 +9,7 @@ namespace IsbaSatisBlazor.Data.Models
 {
     public class Desk:ModelBase
     {
-        public string Adi { get; set; }
+        public string Name { get; set; }
         public bool IsFull { get; set; }
         public int Capacity { get; set; }
         public Guid DeskLocationId { get; set; }

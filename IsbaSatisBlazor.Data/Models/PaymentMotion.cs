@@ -9,7 +9,7 @@ namespace IsbaSatisBlazor.Data.Models
 {
     public class PaymentMotion:ModelBase
     {
-        public decimal Tutar { get; set; }
+        public decimal Price { get; set; }
         public Guid PaymentTypeId { get; set; }
         public virtual PaymentType PaymentType { get; set; }
         public Guid AdisyonId { get; set; }
