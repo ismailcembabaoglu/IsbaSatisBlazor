@@ -15,7 +15,7 @@ namespace IsbaSatisBlazor.Data.Models
         public string CustomerSurname { get; set; }
         public string Company { get; set; }
         public string CardNumber { get; set; }
-        public virtual ICollection<Phone> Telefonlar { get; set; }
+        public virtual ICollection<Phone> Phones { get; set; }
         public virtual ICollection<Address> Addresses { get; set; }
         public virtual ICollection<Adisyon> Adisyons { get; set; }
     }

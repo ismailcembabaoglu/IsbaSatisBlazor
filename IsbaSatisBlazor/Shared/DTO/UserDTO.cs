@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IsbaSatisBlazor.Shared.DTO.Base;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,11 +7,9 @@ using System.Threading.Tasks;
 
 namespace IsbaSatisBlazor.Shared.DTO
 {
-    public class UserDTO
+    public class UserDTO:ModelBaseDTO
     {
-        public Guid Id { get; set; }
 
-        public DateTime CreateDate { get; set; }
 
         public String FirstName { get; set; }
 

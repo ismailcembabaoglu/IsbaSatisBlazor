@@ -16,6 +16,7 @@ namespace IsbaSatisBlazor.Data.Models
         public virtual Product? Product { get; set; }
         public Guid UnitId { get; set; }
         public virtual Unit Unit { get; set; }
+        public ICollection<ProductMotion> ProductMotions { get; set; }
 
     }
 }

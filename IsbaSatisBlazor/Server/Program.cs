@@ -26,9 +26,10 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<HttpContextAccessor>();
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IProductGroupService, ProductGroupService>();
 builder.Services.AddDbContext<IsbaSatisDbContext>(config =>
 {
-    config.UseSqlServer("Server=DESKTOP-SLOIL0F;Database=IsbaSatisBlazor;User Id=sa;Password=17421742;TrustServerCertificate=True;");
+    config.UseSqlServer("Server=DESKTOP-SLOIL0F;Database=IsbaSatisBlazorTest3;User Id=sa;Password=17421742;TrustServerCertificate=True;");
     config.EnableSensitiveDataLogging();
 });
 

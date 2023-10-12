@@ -16,7 +16,7 @@ namespace IsbaSatisBlazor.Data.Mappings
             builder.Property(c => c.Name).HasMaxLength(50);
            builder.Property(c => c.Price).HasPrecision(10, 2);
             builder.Property(c => c.SupplementaryMaterialMultiplier).HasPrecision(4, 2);
-            builder.ToTable("Products");
+            builder.ToTable("Portions");
         }
     }
 }

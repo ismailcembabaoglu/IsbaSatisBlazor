@@ -12,7 +12,7 @@ namespace IsbaSatisBlazor.Data.Context
     {
         public IsbaSatisDbContext CreateDbContext(string[] args)
         {
-            String connectionString = "Server=DESKTOP-SLOIL0F;Database=IsbaSatisBlazor;User Id=sa;Password=17421742;TrustServerCertificate=True;";
+            String connectionString = "Server=DESKTOP-SLOIL0F;Database=IsbaSatisBlazorTest3;User Id=sa;Password=17421742;TrustServerCertificate=True;";
 
             var builder = new DbContextOptionsBuilder<IsbaSatisDbContext>();
 

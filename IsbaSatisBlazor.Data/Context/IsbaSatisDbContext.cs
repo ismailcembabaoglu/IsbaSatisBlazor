@@ -17,44 +17,51 @@ namespace IsbaSatisBlazor.Data.Context
                 
         }
         public virtual DbSet<Users> Users { get; set; }
+        public virtual DbSet<Address> Addresses { get; set; }
+        public virtual DbSet<Adisyon> Adisyons { get; set; }
+        public virtual DbSet<Customer> Customers { get; set; }
+        public virtual DbSet<Desk> Desks { get; set; }
+        public virtual DbSet<DeskLocation> DeskLocations { get; set; }
+        public virtual DbSet<Garson> Garsons { get; set; }
+        public virtual DbSet<PaymentMotion> PaymentMotions { get; set; }
+        public virtual DbSet<PaymentType> PaymentTypes { get; set; }
+        public virtual DbSet<Phone> Phones { get; set; }
+        public virtual DbSet<Portion> Portions { get; set; }
+        public virtual DbSet<Product> Products { get; set; }
+        public virtual DbSet<ProductGroup> ProductGroups { get; set; }
+        public virtual DbSet<ProductMotion> ProductMotions { get; set; }
+        public virtual DbSet<ProductNote> ProductNotes { get; set; }
+        public virtual DbSet<SupplementaryMaterial> SupplementaryMaterials { get; set; }
+        public virtual DbSet<SupplementaryMaterialMotion> SupplementaryMaterialMotions { get; set; }
+        public virtual DbSet<Unit> Units { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
-            modelBuilder.Entity<ModelBase>(entity =>
-            {
-                entity.ToTable("ModelBases");
 
-                entity.HasKey(i => i.Id);
-
-                entity.Property(i => i.Id).HasColumnName("Id");
-                entity.Property(e => e.CreatedUser).HasMaxLength(50);
-                entity.Property(e => e.UpdatedUser).HasMaxLength(50);
-                entity.Property(e => e.Decription).HasMaxLength(100);
-            });
-            modelBuilder.Entity<Portion>().HasOne(c=>c.Product).WithMany(c => c.Portions).HasForeignKey(c => c.ProductId);
-            modelBuilder.Entity<SupplementaryMaterial>().HasOne(c => c.Product).WithMany(c => c.SupplementaryMaterials).HasForeignKey(c => c.ProductId);
-            modelBuilder.Entity<Product>().HasOne(c => c.ProductGroup).WithMany(c=>c.Products).HasForeignKey(c=>c.ProductGroupId);
-            modelBuilder.Entity<Porsiyon>().HasRequired(c => c.Birim).WithOptional().Map(c => c.MapKey("BirimId"));
-            modelBuilder.Entity<UrunNot>().HasRequired(c => c.Urun).WithMany(c => c.UrunNotlari).HasForeignKey(c => c.UrunId);
+            modelBuilder.Entity<ModelBase>().UseTpcMappingStrategy();
+            modelBuilder.Entity<Portion>().HasOne(c => c.Product).WithMany(c => c.Portions).HasForeignKey(c => c.ProductId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<SupplementaryMaterial>().HasOne(c => c.Product).WithMany(c => c.SupplementaryMaterials).HasForeignKey(c => c.ProductId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Product>().HasOne(c => c.ProductGroup).WithMany(c => c.Products).HasForeignKey(c => c.ProductGroupId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Portion>().HasOne(c => c.Unit).WithMany(c => c.Portions).HasForeignKey(c => c.UnitId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<ProductNote>().HasOne(c => c.Product).WithMany(c => c.ProductNotes).HasForeignKey(c => c.ProductId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<ProductMotion>().HasOne(c => c.Portion).WithMany(c => c.ProductMotions).HasForeignKey(c => c.PortionId).OnDelete(DeleteBehavior.NoAction);
 
             //Musteri ilişkileri
-            modelBuilder.Entity<Telefon>().HasRequired(c => c.Musteri).WithMany(c => c.Telefonlar).HasForeignKey(c => c.MusteriId);
-            modelBuilder.Entity<Adres>().HasRequired(c => c.Musteri).WithMany(c => c.Adresler).HasForeignKey(c => c.MusteriId);
-            modelBuilder.Entity<Adisyon>().HasOptional(c => c.Musteri).WithMany(c => c.Adisyonlar).HasForeignKey(c => c.MusteriId);
+            modelBuilder.Entity<Phone>().HasOne(c => c.Customer).WithMany(c => c.Phones).HasForeignKey(c => c.CustomerId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Address>().HasOne(c => c.Customer).WithMany(c => c.Addresses).HasForeignKey(c => c.CustomerId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Adisyon>().HasOne(c => c.Customer).WithMany(c => c.Adisyons).HasForeignKey(c => c.CustomerId).OnDelete(DeleteBehavior.NoAction);
             //Masa ilişkileri
-            modelBuilder.Entity<Masa>().HasRequired(c => c.Konum).WithOptional().Map(c => c.MapKey("KonumId"));
-            modelBuilder.Entity<Adisyon>().HasOptional(c => c.Masa).WithMany().HasForeignKey(c => c.MasaId);
+            modelBuilder.Entity<Desk>().HasOne(c => c.DeskLocation).WithMany(c => c.Desks).HasForeignKey(c => c.DeskLocationId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Adisyon>().HasOne(c => c.Desk).WithMany(c => c.Adisyons).HasForeignKey(c => c.DeskId).OnDelete(DeleteBehavior.NoAction);
             //modelBuilder.Entity<Masa>().HasRequired(c => c.Adisyon).WithMany().HasForeignKey(c=>c.AdisyonId);
-            modelBuilder.Entity<Adisyon>().HasOptional(c => c.Garson).WithMany().HasForeignKey(c => c.GarsonId);
-            modelBuilder.Entity<UrunHareket>().HasRequired(c => c.Urun).WithMany(c => c.UrunHareketleri).HasForeignKey(c => c.UrunId);
-            modelBuilder.Entity<UrunHareket>().HasRequired(c => c.Adisyon).WithMany().HasForeignKey(c => c.AdisyonId);
-            modelBuilder.Entity<UrunHareket>().HasRequired(c => c.Adisyon).WithMany(c => c.UrunHareketleri).HasForeignKey(c => c.AdisyonId);
-            modelBuilder.Entity<EkMalzemeHareket>().HasRequired(c => c.UrunHareket).WithMany(c => c.EkMalzemeHareketleri).HasForeignKey(c => c.UrunHareketId);
-            modelBuilder.Entity<EkMalzemeHareket>().HasRequired(c => c.EkMalzeme).WithMany().HasForeignKey(c => c.EkMalzemeId);
+            modelBuilder.Entity<Adisyon>().HasOne(c => c.Garson).WithMany(c => c.Adisyons).HasForeignKey(c => c.GarsonId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<ProductMotion>().HasOne(c => c.Product).WithMany(c => c.ProductMotions).HasForeignKey(c => c.ProductId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<ProductMotion>().HasOne(c => c.Adisyon).WithMany(c => c.ProductMotions).HasForeignKey(c => c.AdisyonId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<SupplementaryMaterialMotion>().HasOne(c => c.ProductMotion).WithMany(c => c.SupplementaryMaterialMotions).HasForeignKey(c => c.ProductMotionId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<SupplementaryMaterialMotion>().HasOne(c => c.SupplementaryMaterial).WithMany(c => c.SupplementaryMaterialMotions).HasForeignKey(c => c.SupplementaryMaterialId).OnDelete(DeleteBehavior.NoAction);
             //Odeme İlişkileri
-            modelBuilder.Entity<OdemeHareket>().HasRequired(c => c.OdemeTuru).WithMany(c => c.OdemeHareketleri).HasForeignKey(c => c.OdemeTuruId);
-            modelBuilder.Entity<OdemeHareket>().HasRequired(c => c.Adisyon).WithMany(c => c.OdemeHareketleri).HasForeignKey(c => c.AdisyonId);
-            modelBuilder.Entity<OdemeTuru>().HasRequired(c => c.OdemeTur).WithMany().HasForeignKey(c => c.OdemeTurId);
+            modelBuilder.Entity<PaymentMotion>().HasOne(c => c.PaymentType).WithMany(c => c.PaymentMotions).HasForeignKey(c => c.PaymentTypeId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<PaymentMotion>().HasOne(c => c.Adisyon).WithMany(c => c.PaymentMotions).HasForeignKey(c => c.AdisyonId).OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.ApplyConfiguration(new AddressMap());
             modelBuilder.ApplyConfiguration(new AdisyonMap());
@@ -74,7 +81,8 @@ namespace IsbaSatisBlazor.Data.Context
             modelBuilder.ApplyConfiguration(new SupplementaryMaterialMotionMap());
             modelBuilder.ApplyConfiguration(new UnitMap());
             modelBuilder.ApplyConfiguration(new UsersMap());
-            
+            modelBuilder.ApplyConfiguration(new ModelBaseMap());
+
             base.OnModelCreating(modelBuilder);
         }
     }
