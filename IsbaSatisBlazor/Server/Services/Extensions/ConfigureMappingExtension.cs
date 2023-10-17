@@ -36,7 +36,7 @@ namespace IsbaSatisBlazor.Server.Services.Extensions
                 ;
 
 
-            CreateMap<ProductGroupDTO, ProductGroup>();
+            CreateMap<ProductGroup, ProductGroupDTO>();
             CreateMap<ProductGroupDTO, ProductGroup>()
                 .ForMember(c=>c.GroupName,y=>y.MapFrom(z=>z.GroupName))
                 .ForMember(c => c.CreateDate, y => y.MapFrom(z => z.CreateDate))

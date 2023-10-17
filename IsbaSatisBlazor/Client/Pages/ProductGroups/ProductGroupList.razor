@@ -1,2 +1,33 @@
 ﻿@page "/productgrouplist"
 @inherits ProductGroupListProcess
+@if (ProductGroupList != null)
+{
+
+    <RadzenButton Shade="Shade.Dark" Click=goCreateUserPage Icon="add" Variant="Variant.Flat" Text="Yeni Grup Ekle" ButtonStyle="ButtonStyle.Success" />
+    <RadzenDataGrid AllowFiltering="true"
+                    ShowCellDataAsTooltip="true"
+                    ColumnWidth="200px"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    AllowColumnPicking="true"
+                    AllowPaging="true" PageSize="10"
+                    AllowSorting="true" Data="@ProductGroupList"
+                    TItem="ProductGroupDTO">
+        <Columns>
+            <RadzenDataGridColumn TItem="ProductGroupDTO" Context="productGroup" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
+                <Template Context="productGroup">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(() => goUpdateUserPage(productGroup.Id))">
+                    </RadzenButton>
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(() => DeleteUser(productGroup.Id))">
+                    </RadzenButton>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="ProductGroupDTO" Property="Id" Title="Id">
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="ProductGroupDTO" Property="GroupName" Title="Grup Adı" />
+            <RadzenDataGridColumn TItem="ProductGroupDTO" Property="CreateDate" Title="Kayıt Tarihi">
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+
+}

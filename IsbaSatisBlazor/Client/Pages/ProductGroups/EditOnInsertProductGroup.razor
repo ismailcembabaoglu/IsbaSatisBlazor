@@ -1,0 +1,102 @@
+﻿@page "/productgroups/add"
+@page "/productgroups/edit/{GroupId:guid}"
+@using IsbaSatisBlazor.Client.CustomComponents.Buttons
+<h3>@pageTitle</h3> <br />
+
+<EditForm Model="@productGroupModel" OnValidSubmit="editOrUpdate">
+    <DataAnnotationsValidator />
+
+    <div class="form-row">
+
+        <div class="form-group col-md-6">
+            <label>Grup Adı</label>
+            <InputText @bind-Value="@productGroupModel.GroupName" class="form-control" />
+            <ValidationMessage For="@(()=>productGroupModel.GroupName)" />
+        </div>
+
+    </div>
+   <br />
+
+    <div class="form-group">
+        <SaveButtonComponent Caption="Kaydet"/>
+       <CancelButtonComponent Caption="Geri Dön"  OnClick="goBackGroupList"/> 
+    </div>
+
+
+
+
+</EditForm>
+
+@code {
+    [Parameter]
+    public Guid GroupId { get; set; }
+
+    [Inject]
+    public HttpClient HttpClient { get; set; }
+
+    [Inject]
+    public ModalManager ModalManager { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+    [Inject]
+    ILocalStorageService localStorageService { get; set; }
+
+
+    private ProductGroupDTO productGroupModel = new ProductGroupDTO();
+    private string pageTitle = "Yeni Grup Ekle";
+    void goBackGroupList()
+    {
+        NavigationManager.NavigateTo("/productgrouplist");
+    }
+    protected async override Task OnInitializedAsync()
+    {
+        if (GroupId != null && GroupId != Guid.Empty)
+        {
+            try
+            {
+                pageTitle = "Grup Güncelle";
+                string token = await localStorageService.GetItemAsStringAsync("token");
+                productGroupModel = await HttpClient.GetServiceResponseAsync<ProductGroupDTO>("api/productgroup/ProductGroupById/" + GroupId, token, true);
+            }
+            catch (ApiException ex)
+            {
+                await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+            }
+        }
+    }
+    async Task editOrUpdate()
+    {
+        try
+        {
+            String url = "api/productgroup/create";
+
+            // Update
+            if (GroupId != null && GroupId != Guid.Empty)
+            {
+                url = "api/productgroup/update";
+                productGroupModel.UpdatedDate = DateTime.Now;
+                productGroupModel.UpdatedUser = await localStorageService.GetItemAsStringAsync("email");
+            }
+            else
+            {
+                productGroupModel.CreateDate = DateTime.Now;
+                productGroupModel.CreatedUser = await localStorageService.GetItemAsStringAsync("email");
+            }
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            productGroupModel = await HttpClient.PostGetServiceResponseAsync<ProductGroupDTO, ProductGroupDTO>(url, productGroupModel, token, true);
+
+            NavigationManager.NavigateTo("/productgrouplist");
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+        catch (Exception ex)
+        {
+            await ModalManager.ShowMessageAsync("Exception", ex.Message);
+        }
+
+
+    }
+}

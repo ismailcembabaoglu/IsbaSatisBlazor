@@ -1,5 +1,6 @@
 ﻿@page "/users/add"
 @page "/users/edit/{UserId:guid}"
+@using IsbaSatisBlazor.Client.CustomComponents.Buttons
 
 
 
@@ -12,13 +13,13 @@
     <div class="form-row">
 
         <div class="form-group col-md-6">
-            <label>First Name</label>
+            <label>Adı</label>
             <InputText @bind-Value="@userModel.FirstName" class="form-control" />
             <ValidationMessage For="@(()=>userModel.FirstName)" />
         </div>
 
         <div class="form-group col-md-6">
-            <label>Last Name</label>
+            <label>Soyadı</label>
             <InputText @bind-Value="@userModel.LastName" class="form-control" />
             <ValidationMessage For="@(()=>userModel.LastName)" />
         </div>
@@ -28,13 +29,13 @@
     <div class="form-row">
 
         <div class="form-group col-md-6">
-            <label>E-Mail Address</label>
+            <label>E-Mail Addres</label>
             <InputText @bind-Value="@userModel.EMailAddress" class="form-control" />
             <ValidationMessage For="@(()=>userModel.EMailAddress)" />
         </div>
 
         <div class="form-group col-md-6">
-            <label>Password</label>
+            <label>Şifre</label>
             <InputText @bind-Value="@userModel.Password" class="form-control" type="password" />
             <ValidationMessage For="@(()=>userModel.Password)" />
         </div>
@@ -46,16 +47,16 @@
         <div class="form-group col-md-6">
             <div class="form-check">
                 <InputCheckbox @bind-Value="userModel.IsActive" class="form-check-input" id="chUserStatus" />
-                <label for="chUserStatus" class="form-check-label">User Status</label>
+                <label for="chUserStatus" class="form-check-label">Aktiflik</label>
             </div>
         </div>
 
     </div>
 
     <div class="form-group">
-        <SaveButtonComponent Caption="Save" />
-       <button type="submit" class="btn btn-danger">Save</button>
-        <CancelButtonComponent OnClick="goBackUserList" />
+        <SaveButtonComponent Caption="Kaydet" />
+      
+        <CancelButtonComponent Caption="Geri Dön" OnClick="goBackUserList" />
     </div>
 
 
@@ -121,6 +122,13 @@
             if (UserId != null && UserId != Guid.Empty)
             {
                 url = "api/user/update";
+                userModel.UpdatedDate = DateTime.Now;
+                userModel.UpdatedUser = await localStorageService.GetItemAsStringAsync("email");
+            }
+            else
+            {
+                userModel.CreateDate = DateTime.Now;
+                userModel.CreatedUser = await localStorageService.GetItemAsStringAsync("email");
             }
             string token = await localStorageService.GetItemAsStringAsync("token");
             userModel = await HttpClient.PostGetServiceResponseAsync<UserDTO, UserDTO>(url, userModel, token,true);

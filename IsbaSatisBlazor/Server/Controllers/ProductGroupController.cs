@@ -42,5 +42,21 @@ namespace IsbaSatisBlazor.Server.Controllers
                 Value = await productGroupService.UpdateProductGroup(productGroup)
             };
         }
+        [HttpGet("ProductGroupById/{Id}")]
+        public async Task<ServiceResponse<ProductGroupDTO>> GetUserById(Guid Id)
+        {
+            return new ServiceResponse<ProductGroupDTO>()
+            {
+                Value = await productGroupService.GetUProductGroupById(Id)
+            };
+        }
+        [HttpPost("Delete")]
+        public async Task<ServiceResponse<bool>> DeleteUser([FromBody] Guid id)
+        {
+            return new ServiceResponse<bool>()
+            {
+                Value = await productGroupService.DeleteProductGroupById(id)
+            };
+        }
     }
 }
