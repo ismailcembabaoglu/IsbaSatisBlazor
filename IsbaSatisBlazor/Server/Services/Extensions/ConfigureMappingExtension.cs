@@ -27,24 +27,15 @@ namespace IsbaSatisBlazor.Server.Services.Extensions
 
             CreateMap<Users, UserDTO>();
             CreateMap<UserDTO, Users>()
-                .ForMember(x => x.Password, y => y.MapFrom(z => PasswordEncrypter.Encrypt(z.Password)))
-                .ForMember(c => c.CreateDate, y => y.MapFrom(z => z.CreateDate))
-                .ForMember(c => c.UpdatedDate, y => y.MapFrom(z => z.UpdatedDate))
-                .ForMember(c => c.UpdatedUser, y => y.MapFrom(z => z.UpdatedUser))
-                .ForMember(c => c.CreatedUser, y => y.MapFrom(z => z.CreatedUser))
-                .ForMember(c => c.Decription, y => y.MapFrom(z => z.Decription))
-                ;
-
+                .ForMember(x => x.Password, y => y.MapFrom(z => PasswordEncrypter.Encrypt(z.Password))) ;
 
             CreateMap<ProductGroup, ProductGroupDTO>();
-            CreateMap<ProductGroupDTO, ProductGroup>()
-                .ForMember(c=>c.GroupName,y=>y.MapFrom(z=>z.GroupName))
-                .ForMember(c => c.CreateDate, y => y.MapFrom(z => z.CreateDate))
-                .ForMember(c => c.UpdatedDate, y => y.MapFrom(z => z.UpdatedDate))
-                .ForMember(c => c.UpdatedUser, y => y.MapFrom(z => z.UpdatedUser))
-                .ForMember(c => c.CreatedUser, y => y.MapFrom(z => z.CreatedUser))
-                .ForMember(c => c.Decription, y => y.MapFrom(z => z.Decription))
-                ; 
+            CreateMap<ProductGroupDTO, ProductGroup>();
+
+            CreateMap<Product, ProductDTO>()
+                .ForMember(c => c.GroupName, y => y.MapFrom(z => z.ProductGroup.GroupName));
+            CreateMap<ProductDTO, Product>();
+
 
 
 

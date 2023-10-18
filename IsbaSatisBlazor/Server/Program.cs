@@ -27,6 +27,7 @@ builder.Services.AddScoped<HttpContextAccessor>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductGroupService, ProductGroupService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddDbContext<IsbaSatisDbContext>(config =>
 {
     config.UseSqlServer("Server=DESKTOP-SLOIL0F;Database=IsbaSatisBlazorTest3;User Id=sa;Password=17421742;TrustServerCertificate=True;");
