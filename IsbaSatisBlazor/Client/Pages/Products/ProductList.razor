@@ -1,0 +1,117 @@
+﻿@page "/productlist"
+
+
+
+
+
+@if (ProductLists != null)
+{
+
+    <RadzenButton Shade="Shade.Dark" Click=goCreateUserPage Icon="add" Variant="Variant.Flat" Text="Yeni Kullanıcı Ekle" ButtonStyle="ButtonStyle.Success" />
+    <RadzenDataGrid AllowFiltering="true"
+                    ShowCellDataAsTooltip="true"
+                    ColumnWidth="200px"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    AllowColumnPicking="true"
+                    AllowPaging="true" PageSize="10"
+                    AllowSorting="true" Data="@ProductLists"
+                    TItem="ProductDTO">
+        <Columns>
+            <RadzenDataGridColumn TItem="ProductDTO" Context="user" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
+                <Template Context="product">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(() => goUpdateUserPage(product.Id))">
+                    </RadzenButton>
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(() => DeleteUser(product.Id))">
+                    </RadzenButton>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="ProductDTO" Title="Photo" Frozen="true" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+                <Template Context="data">
+                    <RadzenImage Path="@data.Photo" class="rz-gravatar" />
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="ProductDTO" Property="Id" Title="Id">
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="ProductDTO" Property="Barcode" Title="Barkod" />
+            <RadzenDataGridColumn TItem="ProductDTO" Property="ProductName" Title="Ürün Adı" />
+            <RadzenDataGridColumn TItem="ProductDTO" Property="CreateDate" Title="Kayıt Tarihi">
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="ProductDTO" Property="GroupName" Title="Grup Adı" />
+        </Columns>
+    </RadzenDataGrid>
+
+}
+@code {
+    [Inject]
+    public HttpClient Client { get; set; }
+
+    [Inject]
+    ModalManager ModalManager { get; set; }
+
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+    [Inject]
+    ILocalStorageService localStorageService { get; set; }
+
+    protected IEnumerable<ProductDTO> ProductLists;
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        await LoadList();
+    }
+
+
+    protected void goCreateUserPage()
+    {
+        NavigationManager.NavigateTo("/products/add");
+    }
+
+    protected void goUpdateUserPage(Guid UserId)
+    {
+        NavigationManager.NavigateTo("/products/edit/" + UserId);
+    }
+
+    protected async Task DeleteUser(Guid Id)
+    {
+        bool confirmed = await ModalManager.ConfirmationAsync("Confirmation", "Ürünü Silmek İstediğinize eminmisiniz ?");
+
+        if (!confirmed) return;
+
+        try
+        {
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            bool deleted = await Client.PostGetServiceResponseAsync<bool, Guid>("api/Product/Delete", Id, token, true);
+
+            await LoadList();
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Product Deletion Error", ex.Message);
+        }
+        catch (Exception ex)
+        {
+            await ModalManager.ShowMessageAsync("An Error", ex.Message);
+        }
+    }
+
+
+    protected async Task LoadList()
+    {
+        try
+        {
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            ProductLists = await Client.GetServiceResponseAsync<List<ProductDTO>>("api/Product/Products", token, true);
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+        catch (Exception ex)
+        {
+            await ModalManager.ShowMessageAsync("Exception", ex.Message);
+        }
+    }
+}
