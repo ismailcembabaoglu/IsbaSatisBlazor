@@ -17,6 +17,7 @@
                <RadzenSidebar @bind-Expanded="@sidebar2Expanded">
             <RadzenPanelMenu DisplayStyle="@(sidebar1Expanded?MenuItemDisplayStyle.IconAndText:MenuItemDisplayStyle.Icon)" ShowArrow=false>
                 <RadzenPanelMenuItem Text="Anasayfa" Path="/" Icon="home" />
+                    <RadzenPanelMenuItem Text="Ürünler" Path="/productlist" Icon="home" />
                 <RadzenPanelMenuItem Text="Kullanıcı Listesi" Path="/userlist" Icon="account_circle" />
                     <RadzenPanelMenuItem Text="Ürün Grup Listesi" Path="/productgrouplist" Icon="category" />
                 <RadzenPanelMenuItem Text="Çıkış Yap" Path="/logout" Icon="input" />

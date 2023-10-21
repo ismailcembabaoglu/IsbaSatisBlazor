@@ -1,0 +1,147 @@
+﻿@page "/products/add"
+@page "/products/edit/{ProductId:guid}"
+
+<RadzenTemplateForm Data="@productModel" Submit="@((ProductDTO args) => { editOrUpdate(args); })">
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenStack>
+            <RadzenFieldset Text="Ürün Ekleme Sayfası">
+                <RadzenStack Gap="1rem">
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Grubu" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenDropDown @bind-Value="productModel.ProductGroupId" AllowClear="true" Placeholder="seçim yapınız" Data="@ProductGroupList" Style="width: 100%;" TextProperty="GroupName" ValueProperty="Id" Name="Id"></RadzenDropDown>
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Ürün Adı" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenTextBox Style="width: 100%;" @bind-Value="productModel.ProductName" Name="ProductName" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Barkodu" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenTextBox Style="width: 100%;" @bind-Value="productModel.Barcode" Name="Barcode" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Fotoğraf" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenTextBox Style="width: 100%;" @bind-Value="productModel.Photo" Name="Photo" />
+                        </RadzenColumn>
+                    </RadzenRow>
+@*                     <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Expiry Date" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenDatePicker Style="width: 100%;" Name="ExpiryDate" @bind-Value="order.ExpiryDate" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Cardholder" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenTextBox Style="width: 100%;" Name="CardHolder" />
+                        </RadzenColumn>
+                    </RadzenRow> *@
+                </RadzenStack>
+            </RadzenFieldset>
+        </RadzenStack>
+    </RadzenColumn>
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" Class="rz-mt-8 rz-mb-4">
+        <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="@addOrUpdate" />
+        <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Cancel" Click="@goBackGroupList" />
+    </RadzenStack>
+</RadzenTemplateForm>
+
+@code {
+    [Parameter]
+    public Guid ProductId { get; set; }
+
+    [Inject]
+    public HttpClient HttpClient { get; set; }
+
+    [Inject]
+    public ModalManager ModalManager { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+    [Inject]
+    ILocalStorageService localStorageService { get; set; }
+
+
+    private ProductDTO productModel = new ProductDTO();
+
+    protected IEnumerable<ProductGroupDTO> ProductGroupList;
+    private string pageTitle = "Yeni Ürün Ekle";
+    private string addOrUpdate = "Kaydet";
+    void goBackGroupList()
+    {
+        NavigationManager.NavigateTo("/productlist");
+    }
+    protected async override Task OnInitializedAsync()
+    {
+        string token = await localStorageService.GetItemAsStringAsync("token");
+        ProductGroupList = await HttpClient.GetServiceResponseAsync<List<ProductGroupDTO>>("api/productgroup/productgroups", token, true);
+        if (ProductId != null && ProductId != Guid.Empty)
+        {
+            try
+            {
+                pageTitle = "Ürün Güncelle";
+                addOrUpdate = "Güncelle";
+
+                productModel = await HttpClient.GetServiceResponseAsync<ProductDTO>("api/product/ProductById/" + ProductId, token, true);
+            }
+            catch (ApiException ex)
+            {
+                await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+            }
+        }
+    }
+    async Task editOrUpdate(ProductDTO productDTO)
+    {
+
+        try
+        {
+            String url = "api/Product/create";
+            productModel = productDTO;
+            // Update
+            if (ProductId != null && ProductId != Guid.Empty)
+            {
+                url = "api/product/update";
+                productModel.UpdatedDate = DateTime.Now;
+                productModel.UpdatedUser = await localStorageService.GetItemAsStringAsync("email");
+            }
+            else
+            {
+                productModel.CreateDate = DateTime.Now;
+                productModel.CreatedUser = await localStorageService.GetItemAsStringAsync("email");
+            }
+            string token = await localStorageService.GetItemAsStringAsync("token");
+       
+            productModel = await HttpClient.PostGetServiceResponseAsync<ProductDTO, ProductDTO>(url, productModel, token, true);
+
+            NavigationManager.NavigateTo("/productlist");
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+        catch (Exception ex)
+        {
+            await ModalManager.ShowMessageAsync("Exception", ex.Message);
+        }
+
+
+    }
+}
