@@ -51,7 +51,7 @@ namespace IsbaSatisBlazor.Server.Controllers
             };
         }
         [HttpPost("Delete")]
-        public async Task<ServiceResponse<bool>> DeleteUser([FromBody] Guid id)
+        public async Task<ServiceResponse<bool>> DeleteProduct([FromBody] Guid id)
         {
             return new ServiceResponse<bool>()
             {

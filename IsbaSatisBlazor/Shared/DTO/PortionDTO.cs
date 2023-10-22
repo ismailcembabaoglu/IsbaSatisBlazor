@@ -1,22 +1,21 @@
-﻿using IsbaSatisBlazor.Data.Models.BaseModel;
+﻿using IsbaSatisBlazor.Shared.DTO.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IsbaSatisBlazor.Data.Models
+namespace IsbaSatisBlazor.Shared.DTO
 {
-    public class Portion:ModelBase
+    public class PortionDTO:ModelBaseDTO
     {
         public string Name { get; set; }
         public decimal Price { get; set; }
         public decimal SupplementaryMaterialMultiplier { get; set; }
         public Guid ProductId { get; set; }
-        public virtual Product? Product { get; set; }
+        public string? ProductName { get; set; }
         public Guid UnitId { get; set; }
-        public virtual Unit? Unit { get; set; }
-        public ICollection<ProductMotion>? ProductMotions { get; set; }
+        public string? GroupName { get; set; }
 
     }
 }

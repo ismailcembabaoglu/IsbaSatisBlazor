@@ -1,0 +1,22 @@
+﻿@page "/Unitlist"
+<h3>UnitList</h3>
+
+@code {
+    [Inject]
+    public HttpClient Client { get; set; }
+
+    [Inject]
+    ModalManager ModalManager { get; set; }
+
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+    [Inject]
+    ILocalStorageService localStorageService { get; set; }
+
+    protected IEnumerable<UnitDTO> UnitLists;
+    protected void goCreateUserPage()
+    {
+        NavigationManager.NavigateTo("/units/add");
+    }
+
+}

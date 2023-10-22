@@ -12,7 +12,7 @@ namespace IsbaSatisBlazor.Data.Models
         public string SupplementaryMaterialName { get; set; }
         public decimal Price { get; set; }
         public Guid ProductId { get; set; }
-        public virtual Product Product { get; set; }
-        public ICollection<SupplementaryMaterialMotion> SupplementaryMaterialMotions { get; set; }
+        public virtual Product? Product { get; set; }
+        public ICollection<SupplementaryMaterialMotion>? SupplementaryMaterialMotions { get; set; }
     }
 }

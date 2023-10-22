@@ -36,6 +36,18 @@ namespace IsbaSatisBlazor.Server.Services.Extensions
                 .ForMember(c => c.GroupName, y => y.MapFrom(z => z.ProductGroup.GroupName));
             CreateMap<ProductDTO, Product>();
 
+            CreateMap<Portion, PortionDTO>()
+                .ForMember(c=>c.ProductName,y=>y.MapFrom(z=>z.Product.ProductName))
+                .ForMember(c=>c.GroupName,y=>y.MapFrom(z=>z.Unit.GroupName));
+            CreateMap<PortionDTO, Portion>();
+
+            CreateMap<SupplementaryMaterial, SupplementaryMaterialDTO>()
+                .ForMember(c => c.ProductName, y => y.MapFrom(z => z.Product.ProductName));
+            CreateMap<SupplementaryMaterialDTO, SupplementaryMaterial>();
+
+            CreateMap<Unit, UnitDTO>();
+            CreateMap<UnitDTO, Unit>();
+
 
 
 
