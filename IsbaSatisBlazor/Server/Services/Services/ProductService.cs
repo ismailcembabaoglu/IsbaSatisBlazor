@@ -23,7 +23,7 @@ namespace IsbaSatisBlazor.Server.Services.Services
         {
             var dbProduct = await context.Products.Where(i => i.Id == Product.Id).FirstOrDefaultAsync();
 
-            if (dbProduct != null)
+            if (dbProduct == null)
                 throw new Exception("Ürün Zaten Mevcut");
 
 

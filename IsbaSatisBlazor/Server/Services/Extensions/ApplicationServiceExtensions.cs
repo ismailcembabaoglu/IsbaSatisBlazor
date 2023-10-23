@@ -12,6 +12,7 @@ namespace IsbaSatisBlazor.Server.Services.Extensions
             service.AddScoped<IProductService, ProductService>();
             service.AddScoped<IUnitService, UnitService>();
             service.AddScoped<IPortionService, PortionService>();
+            service.AddScoped<ISupplementaryMaterialService, SupplementaryMaterialService>();
             return service;
         }
     }

@@ -39,7 +39,7 @@ namespace IsbaSatisBlazor.Server.Services.Services
         {
             var dbProductGroup = await context.ProductGroups.Where(i => i.Id == Id).FirstOrDefaultAsync();
 
-            if (dbProductGroup != null)
+            if (dbProductGroup == null)
                 throw new Exception("Grup Bulunamadı");
             context.ProductGroups.Remove(dbProductGroup);
             int result = await context.SaveChangesAsync();

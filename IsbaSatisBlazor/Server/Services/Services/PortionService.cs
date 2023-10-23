@@ -40,7 +40,7 @@ namespace IsbaSatisBlazor.Server.Services.Services
         {
             var dbPortion = await context.Portions.Where(i => i.Id == Id).FirstOrDefaultAsync();
 
-            if (dbPortion != null)
+            if (dbPortion == null)
                 throw new Exception("Porsiyon Bulunamadı");
             context.Portions.Remove(dbPortion);
             int result = await context.SaveChangesAsync();
@@ -50,16 +50,24 @@ namespace IsbaSatisBlazor.Server.Services.Services
         public async Task<PortionDTO> GetPortionById(Guid Id)
         {
             return await context.Portions
-                .Where(i => i.Id == Id).Include(c=>c.Product).Include(c=>c.Unit)
+                .Where(i => i.Id == Id).Include(c => c.Product).Include(c => c.Unit)
                 .ProjectTo<PortionDTO>(mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync();
         }
 
         public async Task<List<PortionDTO>> GetPortions()
         {
-            return await context.Portions.Include(c => c.Product).Include(c=>c.Unit)
+            return await context.Portions.Include(c => c.Product).Include(c => c.Unit)
                     .ProjectTo<PortionDTO>(mapper.ConfigurationProvider)
                     .ToListAsync();
+        }
+
+        public async Task<List<PortionDTO>> GetPortionsById(Guid Id)
+        {
+            return await context.Portions.Include(c => c.Product).Include(c => c.Unit)
+                     .Where(c => c.ProductId == Id)
+                     .ProjectTo<PortionDTO>(mapper.ConfigurationProvider)
+                     .ToListAsync();
         }
 
         public async Task<PortionDTO> UpdatePortion(PortionDTO portion)

@@ -23,7 +23,7 @@ namespace IsbaSatisBlazor.Server.Services.Services
         {
             var dbUnit = await context.Units.Where(i => i.Id == Unit.Id).FirstOrDefaultAsync();
 
-            if (dbUnit != null)
+            if (dbUnit == null)
                 throw new Exception("Birim Zaten Mevcut");
 
 

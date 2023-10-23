@@ -7,6 +7,7 @@ namespace IsbaSatisBlazor.Server.Services.Infrastruce
         public Task<PortionDTO> GetPortionById(Guid Id);
 
         public Task<List<PortionDTO>> GetPortions();
+        public Task<List<PortionDTO>> GetPortionsById(Guid Id);
 
         public Task<PortionDTO> CreatePortion(PortionDTO portion);
 

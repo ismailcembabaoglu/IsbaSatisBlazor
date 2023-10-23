@@ -2,6 +2,7 @@
 using IsbaSatisBlazor.Server.Services.Services;
 using IsbaSatisBlazor.Shared.DTO;
 using IsbaSatisBlazor.Shared.ResponseModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace IsbaSatisBlazor.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PortionController : ControllerBase
     {
         private readonly IPortionService portionService;
@@ -22,6 +24,14 @@ namespace IsbaSatisBlazor.Server.Controllers
             return new ServiceResponse<List<PortionDTO>>()
             {
                 Value = await portionService.GetPortions()
+            };
+        }
+        [HttpGet("PortionsById/{Id}")]
+        public async Task<ServiceResponse<List<PortionDTO>>> GetPortionsById(Guid Id)
+        {
+            return new ServiceResponse<List<PortionDTO>>()
+            {
+                Value = await portionService.GetPortionsById(Id)
             };
         }
         [HttpPost("Create")]

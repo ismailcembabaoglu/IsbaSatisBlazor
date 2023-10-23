@@ -38,21 +38,21 @@
                             <RadzenTextBox Style="width: 100%;" @bind-Value="productModel.Photo" Name="Photo" />
                         </RadzenColumn>
                     </RadzenRow>
-@*                     <RadzenRow AlignItems="AlignItems.Center">
-                        <RadzenColumn Size="12" SizeMD="4">
-                            <RadzenLabel Text="Expiry Date" />
-                        </RadzenColumn>
-                        <RadzenColumn Size="12" SizeMD="8">
-                            <RadzenDatePicker Style="width: 100%;" Name="ExpiryDate" @bind-Value="order.ExpiryDate" />
-                        </RadzenColumn>
+                    @*                     <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="4">
+                    <RadzenLabel Text="Expiry Date" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="8">
+                    <RadzenDatePicker Style="width: 100%;" Name="ExpiryDate" @bind-Value="order.ExpiryDate" />
+                    </RadzenColumn>
                     </RadzenRow>
                     <RadzenRow AlignItems="AlignItems.Center">
-                        <RadzenColumn Size="12" SizeMD="4">
-                            <RadzenLabel Text="Cardholder" />
-                        </RadzenColumn>
-                        <RadzenColumn Size="12" SizeMD="8">
-                            <RadzenTextBox Style="width: 100%;" Name="CardHolder" />
-                        </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="4">
+                    <RadzenLabel Text="Cardholder" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="8">
+                    <RadzenTextBox Style="width: 100%;" Name="CardHolder" />
+                    </RadzenColumn>
                     </RadzenRow> *@
                 </RadzenStack>
             </RadzenFieldset>
@@ -63,6 +63,60 @@
         <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Geri Dön" Click="@goBackGroupList" />
     </RadzenStack>
 </RadzenTemplateForm>
+@if (addOrUpdate == "Güncelle")
+{
+    <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Porsiyon Ekle" Click="@InsertRow" Disabled=@(portionToInsert != null || portionToUpdate != null) />
+    <RadzenDataGrid @ref="portionsGrid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                    Data="@portionList" TItem="PortionDTO" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset" Page="@Reset" Filter="@Reset" ColumnWidth="200px">
+        <Columns>
+            <RadzenDataGridColumn TItem="PortionDTO" Context="PortionDTO" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
+                <Template Context="PortionDTO">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(PortionDTO))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(PortionDTO))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                </Template>
+                <EditTemplate Context="Portion">
+                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(Portion))">
+                    </RadzenButton>
+                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEdit(Portion))">
+                    </RadzenButton>
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(Portion))">
+                    </RadzenButton>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="PortionDTO" Property="Id" Title="Id" Width="120px" />
+            <RadzenDataGridColumn TItem="PortionDTO" Property="Name" Title="Porsiyon Adı">
+                <EditTemplate Context="PortionDTO">
+                    <RadzenTextBox @bind-Value="PortionDTO.Name" Style="width:100%; display: block" Name="Adı" />
+                    @* <RadzenRequiredValidator Text="ShipName is required" Component="ShipName" Popup="true" /> *@
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="PortionDTO" Property="Price" Title="Fiyat">
+                <EditTemplate Context="PortionDTO">
+                    <RadzenNumeric @bind-Value="PortionDTO.Price" Style="width:100%; display: block" Name="Fiyat" />
+                    @* <RadzenRequiredValidator Text="ShipName is required" Component="ShipName" Popup="true" /> *@
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="PortionDTO" Property="SupplementaryMaterialMultiplier" Title="Ek malzeme Çarpanı">
+                <EditTemplate Context="PortionDTO">
+                    <RadzenNumeric @bind-Value="PortionDTO.SupplementaryMaterialMultiplier" Style="width:100%; display: block" Name="Fiyat" />
+                    @* <RadzenRequiredValidator Text="ShipName is required" Component="ShipName" Popup="true" /> *@
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="PortionDTO" Property="GroupName" Title="Birim">
+                <EditTemplate Context="PortionDTO">
+                    <RadzenDropDown @bind-Value="PortionDTO.UnitId" Data="@UnitList" TextProperty="GroupName" ValueProperty="Id" Style="width:100%; display: block;" />
+                    @* <RadzenRequiredValidator Text="ShipName is required" Component="ShipName" Popup="true" /> *@
+                </EditTemplate>
+            </RadzenDataGridColumn>
+
+           
+        </Columns>
+    </RadzenDataGrid>
+}
+
+
 @code {
     [Parameter]
     public Guid ProductId { get; set; }
@@ -80,10 +134,74 @@
 
 
     private ProductDTO productModel = new ProductDTO();
+    private PortionDTO portionModel = new PortionDTO();
 
     protected IEnumerable<ProductGroupDTO> ProductGroupList;
+    protected IEnumerable<UnitDTO> UnitList;
+    RadzenDataGrid<PortionDTO> portionsGrid;
+    protected IEnumerable<PortionDTO> portionList;
     private string pageTitle = "Yeni Ürün Ekle";
     private string addOrUpdate = "Kaydet";
+
+    PortionDTO portionToInsert;
+    PortionDTO portionToUpdate;
+    void Reset()
+    {
+        portionToInsert = null;
+        portionToUpdate = null;
+    }
+    async Task EditRow(PortionDTO portion)
+    {
+        portionToUpdate = portion;
+        await portionsGrid.EditRow(portion);
+    }
+    async void OnUpdateRow(PortionDTO portion)
+    {
+        Reset();
+        portion.ProductId = ProductId;
+        portion.UpdatedDate = DateTime.Now;
+        portion.UpdatedUser = await localStorageService.GetItemAsStringAsync("email");
+        string token = await localStorageService.GetItemAsStringAsync("token");
+        portionModel = await HttpClient.PostGetServiceResponseAsync<PortionDTO, PortionDTO>("api/portion/update", portion, token, true);
+    }
+    async Task SaveRow(PortionDTO portion)
+    {
+        await portionsGrid.UpdateRow(portion);
+        portionToInsert = null;
+        await OnInitializedAsync();
+        await portionsGrid.Reload();
+    }
+    void CancelEdit(PortionDTO portion)
+    {
+        Reset();
+
+        portionsGrid.CancelEditRow(portion);
+    }
+    async Task DeleteRow(PortionDTO portion)
+    {
+        Reset();
+
+
+        string token = await localStorageService.GetItemAsStringAsync("token");
+        bool deleted = await HttpClient.PostGetServiceResponseAsync<bool, Guid>("api/Portion/Delete", portion.Id, token, true);
+       await OnInitializedAsync();
+        await portionsGrid.Reload();
+    }
+    async Task InsertRow()
+    {
+        portionToInsert = new PortionDTO();
+        await portionsGrid.InsertRow(portionToInsert);
+    }
+    async void OnCreateRow(PortionDTO portion)
+    {
+        portion.ProductId = ProductId;
+        portion.CreateDate = DateTime.Now;
+        portion.CreatedUser = await localStorageService.GetItemAsStringAsync("email");
+        string token = await localStorageService.GetItemAsStringAsync("token");
+        portionModel = await HttpClient.PostGetServiceResponseAsync<PortionDTO, PortionDTO>("api/portion/create", portion, token, true);
+        portionToInsert = null;
+        // NavigationManager.NavigateTo("/products/edit/"+ProductId);
+    }
     void goBackGroupList()
     {
         NavigationManager.NavigateTo("/productlist");
@@ -91,6 +209,7 @@
     protected async override Task OnInitializedAsync()
     {
         string token = await localStorageService.GetItemAsStringAsync("token");
+        UnitList = await HttpClient.GetServiceResponseAsync<List<UnitDTO>>("api/unit/units", token, true);
         ProductGroupList = await HttpClient.GetServiceResponseAsync<List<ProductGroupDTO>>("api/productgroup/productgroups", token, true);
         if (ProductId != null && ProductId != Guid.Empty)
         {
@@ -98,7 +217,7 @@
             {
                 pageTitle = "Ürün Güncelle";
                 addOrUpdate = "Güncelle";
-
+                portionList = await HttpClient.GetServiceResponseAsync<List<PortionDTO>>("api/portion/PortionsById/" + ProductId, token, true);
                 productModel = await HttpClient.GetServiceResponseAsync<ProductDTO>("api/product/ProductById/" + ProductId, token, true);
             }
             catch (ApiException ex)
@@ -127,7 +246,7 @@
                 productModel.CreatedUser = await localStorageService.GetItemAsStringAsync("email");
             }
             string token = await localStorageService.GetItemAsStringAsync("token");
-       
+
             productModel = await HttpClient.PostGetServiceResponseAsync<ProductDTO, ProductDTO>(url, productModel, token, true);
 
             NavigationManager.NavigateTo("/productlist");
@@ -143,4 +262,5 @@
 
 
     }
+
 }
