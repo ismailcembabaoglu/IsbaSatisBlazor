@@ -26,6 +26,14 @@ namespace IsbaSatisBlazor.Server.Controllers
                 Value = await supplementaryMaterialService.GetSupplementaryMaterials()
             };
         }
+        [HttpGet("SupplementaryMaterialsById/{Id}")]
+        public async Task<ServiceResponse<List<SupplementaryMaterialDTO>>> GetSupplementaryMaterialsById(Guid Id)
+        {
+            return new ServiceResponse<List<SupplementaryMaterialDTO>>()
+            {
+                Value = await supplementaryMaterialService.GetSupplementaryMaterialsById(Id)
+            };
+        }
         [HttpPost("Create")]
         public async Task<ServiceResponse<SupplementaryMaterialDTO>> CreateSupplementaryMaterial([FromBody] SupplementaryMaterialDTO supplementaryMaterial)
         {

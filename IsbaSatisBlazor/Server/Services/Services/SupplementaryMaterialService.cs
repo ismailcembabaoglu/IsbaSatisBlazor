@@ -23,7 +23,7 @@ namespace IsbaSatisBlazor.Server.Services.Services
         {
             var dbSupplementaryMaterials = await context.SupplementaryMaterials.Where(i => i.Id == supplementary.Id).FirstOrDefaultAsync();
 
-            if (dbSupplementaryMaterials == null)
+            if (dbSupplementaryMaterials != null)
                 throw new Exception("Ek Malzeme Zaten Mevcut");
 
 
@@ -39,7 +39,7 @@ namespace IsbaSatisBlazor.Server.Services.Services
         {
             var dbSupplementaryMaterials = await context.SupplementaryMaterials.Where(i => i.Id == Id).FirstOrDefaultAsync();
 
-            if (dbSupplementaryMaterials != null)
+            if (dbSupplementaryMaterials == null)
                 throw new Exception("Ürün Bulunamadı");
             context.SupplementaryMaterials.Remove(dbSupplementaryMaterials);
             int result = await context.SaveChangesAsync();
@@ -57,6 +57,14 @@ namespace IsbaSatisBlazor.Server.Services.Services
         public async Task<List<SupplementaryMaterialDTO>> GetSupplementaryMaterials()
         {
             return await context.SupplementaryMaterials.Include(c => c.Product)
+                   .ProjectTo<SupplementaryMaterialDTO>(mapper.ConfigurationProvider)
+                   .ToListAsync();
+        }
+
+        public async Task<List<SupplementaryMaterialDTO>> GetSupplementaryMaterialsById(Guid Id)
+        {
+            return await context.SupplementaryMaterials.Include(c => c.Product)
+                   .Where(c => c.ProductId == Id)
                    .ProjectTo<SupplementaryMaterialDTO>(mapper.ConfigurationProvider)
                    .ToListAsync();
         }

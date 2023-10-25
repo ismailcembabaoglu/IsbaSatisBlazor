@@ -65,9 +65,47 @@
 </RadzenTemplateForm>
 @if (addOrUpdate == "Güncelle")
 {
+    <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Ek Malzeme Ekle" Click="@InsertRowSupp" Disabled=@(supplementaryMeterialToInsert != null || supplementaryMeterialToUpdate != null) />
+    <RadzenDataGrid @ref="supplementaryMaterialsGrid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                    Data="@supplementaryMaterialList" TItem="SupplementaryMaterialDTO" RowUpdate="@OnUpdateRowSupp" RowCreate="@OnCreateRowSupp" Sort="@ResetSupp" Page="@ResetSupp" Filter="@ResetSupp" FilterMode="FilterMode.Simple" ColumnWidth="200px">
+        <Columns>
+            <RadzenDataGridColumn TItem="SupplementaryMaterialDTO" Context="SupplementaryMaterialDTO" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
+                <Template Context="SupplementaryMaterialDTO">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRowSuppp(SupplementaryMaterialDTO))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRowSupp(SupplementaryMaterialDTO))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                </Template>
+                <EditTemplate Context="SupplementaryMaterialDTO">
+                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRowSupp(SupplementaryMaterialDTO))">
+                    </RadzenButton>
+                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEditSupp(SupplementaryMaterialDTO))">
+                    </RadzenButton>
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRowSupp(SupplementaryMaterialDTO))">
+                    </RadzenButton>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="SupplementaryMaterialDTO" Property="Id" Title="Id" Width="120px" />
+            <RadzenDataGridColumn TItem="SupplementaryMaterialDTO" Property="SupplementaryMaterialName" Title="Ek Malzeme Adı">
+                <EditTemplate Context="SupplementaryMaterialDTO">
+                    <RadzenTextBox @bind-Value="SupplementaryMaterialDTO.SupplementaryMaterialName" Style="width:100%; display: block" Name="Adı" />
+                    @* <RadzenRequiredValidator Text="ShipName is required" Component="ShipName" Popup="true" /> *@
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="SupplementaryMaterialDTO" Property="Price" Title="Fiyat">
+                <EditTemplate Context="SupplementaryMaterialDTO">
+                    <RadzenNumeric @bind-Value="SupplementaryMaterialDTO.Price" Style="width:100%; display: block" Name="Fiyat" />
+                    @* <RadzenRequiredValidator Text="ShipName is required" Component="ShipName" Popup="true" /> *@
+                </EditTemplate>
+            </RadzenDataGridColumn>
+
+
+        </Columns>
+    </RadzenDataGrid>
+
     <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Porsiyon Ekle" Click="@InsertRow" Disabled=@(portionToInsert != null || portionToUpdate != null) />
     <RadzenDataGrid @ref="portionsGrid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="DataGridEditMode.Single"
-                    Data="@portionList" TItem="PortionDTO" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset" Page="@Reset" Filter="@Reset" ColumnWidth="200px">
+                    Data="@portionList" TItem="PortionDTO" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset" Page="@Reset" Filter="@Reset" FilterMode="FilterMode.Simple" ColumnWidth="200px">
         <Columns>
             <RadzenDataGridColumn TItem="PortionDTO" Context="PortionDTO" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
                 <Template Context="PortionDTO">
@@ -111,9 +149,13 @@
                 </EditTemplate>
             </RadzenDataGridColumn>
 
-           
+
         </Columns>
     </RadzenDataGrid>
+
+
+
+   
 }
 
 
@@ -135,47 +177,102 @@
 
     private ProductDTO productModel = new ProductDTO();
     private PortionDTO portionModel = new PortionDTO();
+    private SupplementaryMaterialDTO supplementaryMaterialModel = new SupplementaryMaterialDTO();
 
     protected IEnumerable<ProductGroupDTO> ProductGroupList;
     protected IEnumerable<UnitDTO> UnitList;
     RadzenDataGrid<PortionDTO> portionsGrid;
+    RadzenDataGrid<SupplementaryMaterialDTO> supplementaryMaterialsGrid;
     protected IEnumerable<PortionDTO> portionList;
+    protected IEnumerable<SupplementaryMaterialDTO> supplementaryMaterialList;
     private string pageTitle = "Yeni Ürün Ekle";
     private string addOrUpdate = "Kaydet";
 
     PortionDTO portionToInsert;
     PortionDTO portionToUpdate;
+    SupplementaryMaterialDTO supplementaryMeterialToInsert;
+    SupplementaryMaterialDTO supplementaryMeterialToUpdate;
     void Reset()
     {
         portionToInsert = null;
         portionToUpdate = null;
+    }
+    void ResetSupp()
+    {
+        supplementaryMeterialToInsert = null;
+        supplementaryMeterialToUpdate = null;
     }
     async Task EditRow(PortionDTO portion)
     {
         portionToUpdate = portion;
         await portionsGrid.EditRow(portion);
     }
+    async Task EditRowSuppp(SupplementaryMaterialDTO supplementaryMaterial)
+    {
+        supplementaryMeterialToUpdate = supplementaryMaterial;
+        await supplementaryMaterialsGrid.EditRow(supplementaryMaterial);
+    }
     async void OnUpdateRow(PortionDTO portion)
     {
-        Reset();
-        portion.ProductId = ProductId;
-        portion.UpdatedDate = DateTime.Now;
-        portion.UpdatedUser = await localStorageService.GetItemAsStringAsync("email");
-        string token = await localStorageService.GetItemAsStringAsync("token");
-        portionModel = await HttpClient.PostGetServiceResponseAsync<PortionDTO, PortionDTO>("api/portion/update", portion, token, true);
+        try
+        {
+            Reset();
+            portion.ProductId = ProductId;
+            portion.UpdatedDate = DateTime.Now;
+            portion.UpdatedUser = await localStorageService.GetItemAsStringAsync("email");
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            portionModel = await HttpClient.PostGetServiceResponseAsync<PortionDTO, PortionDTO>("api/portion/update", portion, token, true);
+            await ModalManager.ShowMessageAsync("Başarılı", portion.Name + " " + "Porsiyonu Başarıyla Güncellendi");
+        }
+        catch (ApiException ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+
+    }
+    async void OnUpdateRowSupp(SupplementaryMaterialDTO supplementaryMaterial)
+    {
+        try
+        {
+            Reset();
+            supplementaryMaterial.ProductId = ProductId;
+            supplementaryMaterial.UpdatedDate = DateTime.Now;
+            supplementaryMaterial.UpdatedUser = await localStorageService.GetItemAsStringAsync("email");
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            supplementaryMaterialModel = await HttpClient.PostGetServiceResponseAsync<SupplementaryMaterialDTO, SupplementaryMaterialDTO>("api/SupplementaryMaterial/update", supplementaryMaterial, token, true);
+            await ModalManager.ShowMessageAsync("Başarılı", supplementaryMaterial.SupplementaryMaterialName + " " + "EkMalzemesi Başarıyla Güncellendi");
+        }
+        catch (ApiException ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+
     }
     async Task SaveRow(PortionDTO portion)
     {
         await portionsGrid.UpdateRow(portion);
         portionToInsert = null;
         await OnInitializedAsync();
-        await portionsGrid.Reload();
+    }
+    async Task SaveRowSupp(SupplementaryMaterialDTO supplementaryMaterial)
+    {
+        await supplementaryMaterialsGrid.UpdateRow(supplementaryMaterial);
+        supplementaryMeterialToInsert = null;
+        await OnInitializedAsync();
     }
     void CancelEdit(PortionDTO portion)
     {
         Reset();
 
         portionsGrid.CancelEditRow(portion);
+    }
+    void CancelEditSupp(SupplementaryMaterialDTO supplementaryMaterial)
+    {
+        ResetSupp();
+
+        supplementaryMaterialsGrid.CancelEditRow(supplementaryMaterial);
     }
     async Task DeleteRow(PortionDTO portion)
     {
@@ -184,22 +281,67 @@
 
         string token = await localStorageService.GetItemAsStringAsync("token");
         bool deleted = await HttpClient.PostGetServiceResponseAsync<bool, Guid>("api/Portion/Delete", portion.Id, token, true);
-       await OnInitializedAsync();
+        await OnInitializedAsync();
         await portionsGrid.Reload();
+    }
+    async Task DeleteRowSupp(SupplementaryMaterialDTO supplementaryMaterial)
+    {
+        ResetSupp();
+
+
+        string token = await localStorageService.GetItemAsStringAsync("token");
+        bool deleted = await HttpClient.PostGetServiceResponseAsync<bool, Guid>("api/SupplementaryMaterial/Delete", supplementaryMaterial.Id, token, true);
+        await OnInitializedAsync();
+        await supplementaryMaterialsGrid.Reload();
     }
     async Task InsertRow()
     {
         portionToInsert = new PortionDTO();
         await portionsGrid.InsertRow(portionToInsert);
     }
+    async Task InsertRowSupp()
+    {
+        supplementaryMeterialToInsert = new SupplementaryMaterialDTO();
+        await supplementaryMaterialsGrid.InsertRow(supplementaryMeterialToInsert);
+    }
     async void OnCreateRow(PortionDTO portion)
     {
-        portion.ProductId = ProductId;
-        portion.CreateDate = DateTime.Now;
-        portion.CreatedUser = await localStorageService.GetItemAsStringAsync("email");
-        string token = await localStorageService.GetItemAsStringAsync("token");
-        portionModel = await HttpClient.PostGetServiceResponseAsync<PortionDTO, PortionDTO>("api/portion/create", portion, token, true);
-        portionToInsert = null;
+        try
+        {
+            portion.ProductId = ProductId;
+            portion.CreateDate = DateTime.Now;
+            portion.CreatedUser = await localStorageService.GetItemAsStringAsync("email");
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            portionModel = await HttpClient.PostGetServiceResponseAsync<PortionDTO, PortionDTO>("api/portion/create", portion, token, true);
+            portionToInsert = null;
+            await ModalManager.ShowMessageAsync("Başarılı", portion.Name + " " + "Porsiyonu Başarıyla Eklendi");
+        }
+        catch (ApiException ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+
+        // NavigationManager.NavigateTo("/products/edit/"+ProductId);
+    }
+    async void OnCreateRowSupp(SupplementaryMaterialDTO supplementaryMaterial)
+    {
+        try
+        {
+            supplementaryMaterial.ProductId = ProductId;
+            supplementaryMaterial.CreateDate = DateTime.Now;
+            supplementaryMaterial.CreatedUser = await localStorageService.GetItemAsStringAsync("email");
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            supplementaryMaterialModel = await HttpClient.PostGetServiceResponseAsync<SupplementaryMaterialDTO, SupplementaryMaterialDTO>("api/supplementarymaterial/create", supplementaryMaterial, token, true);
+            portionToInsert = null;
+            await ModalManager.ShowMessageAsync("Başarılı", supplementaryMaterial.SupplementaryMaterialName + " " + "EkMalzemesi Başarıyla Eklendi");
+        }
+        catch (ApiException ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+
         // NavigationManager.NavigateTo("/products/edit/"+ProductId);
     }
     void goBackGroupList()
@@ -218,6 +360,7 @@
                 pageTitle = "Ürün Güncelle";
                 addOrUpdate = "Güncelle";
                 portionList = await HttpClient.GetServiceResponseAsync<List<PortionDTO>>("api/portion/PortionsById/" + ProductId, token, true);
+                supplementaryMaterialList = await HttpClient.GetServiceResponseAsync<List<SupplementaryMaterialDTO>>("api/SupplementaryMaterial/SupplementaryMaterialsById/" + ProductId, token, true);
                 productModel = await HttpClient.GetServiceResponseAsync<ProductDTO>("api/product/ProductById/" + ProductId, token, true);
             }
             catch (ApiException ex)
