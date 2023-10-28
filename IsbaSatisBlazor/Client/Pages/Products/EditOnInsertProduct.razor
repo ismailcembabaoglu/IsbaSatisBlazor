@@ -222,7 +222,7 @@
             portion.UpdatedUser = await localStorageService.GetItemAsStringAsync("email");
             string token = await localStorageService.GetItemAsStringAsync("token");
             portionModel = await HttpClient.PostGetServiceResponseAsync<PortionDTO, PortionDTO>("api/portion/update", portion, token, true);
-            await ModalManager.ShowMessageAsync("Başarılı", portion.Name + " " + "Porsiyonu Başarıyla Güncellendi");
+            await OnInitializedAsync();
         }
         catch (ApiException ex)
         {
@@ -241,7 +241,7 @@
             supplementaryMaterial.UpdatedUser = await localStorageService.GetItemAsStringAsync("email");
             string token = await localStorageService.GetItemAsStringAsync("token");
             supplementaryMaterialModel = await HttpClient.PostGetServiceResponseAsync<SupplementaryMaterialDTO, SupplementaryMaterialDTO>("api/SupplementaryMaterial/update", supplementaryMaterial, token, true);
-            await ModalManager.ShowMessageAsync("Başarılı", supplementaryMaterial.SupplementaryMaterialName + " " + "EkMalzemesi Başarıyla Güncellendi");
+            await OnInitializedAsync();
         }
         catch (ApiException ex)
         {
@@ -314,7 +314,7 @@
             string token = await localStorageService.GetItemAsStringAsync("token");
             portionModel = await HttpClient.PostGetServiceResponseAsync<PortionDTO, PortionDTO>("api/portion/create", portion, token, true);
             portionToInsert = null;
-            await ModalManager.ShowMessageAsync("Başarılı", portion.Name + " " + "Porsiyonu Başarıyla Eklendi");
+            await OnInitializedAsync();
         }
         catch (ApiException ex)
         {
@@ -334,7 +334,6 @@
             string token = await localStorageService.GetItemAsStringAsync("token");
             supplementaryMaterialModel = await HttpClient.PostGetServiceResponseAsync<SupplementaryMaterialDTO, SupplementaryMaterialDTO>("api/supplementarymaterial/create", supplementaryMaterial, token, true);
             portionToInsert = null;
-            await ModalManager.ShowMessageAsync("Başarılı", supplementaryMaterial.SupplementaryMaterialName + " " + "EkMalzemesi Başarıyla Eklendi");
         }
         catch (ApiException ex)
         {

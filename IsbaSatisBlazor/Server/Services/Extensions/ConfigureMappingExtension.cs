@@ -48,6 +48,8 @@ namespace IsbaSatisBlazor.Server.Services.Extensions
             CreateMap<Unit, UnitDTO>();
             CreateMap<UnitDTO, Unit>();
 
+            CreateMap<ProductNote, ProductNoteDTO>();
+            CreateMap<ProductNoteDTO, ProductNote>();
 
 
 
