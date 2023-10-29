@@ -65,6 +65,7 @@
 </RadzenTemplateForm>
 @if (addOrUpdate == "Güncelle")
 {
+    //Ek malzemeler tablosu
     <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Ek Malzeme Ekle" Click="@InsertRowSupp" Disabled=@(supplementaryMeterialToInsert != null || supplementaryMeterialToUpdate != null) />
     <RadzenDataGrid @ref="supplementaryMaterialsGrid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="DataGridEditMode.Single"
                     Data="@supplementaryMaterialList" TItem="SupplementaryMaterialDTO" RowUpdate="@OnUpdateRowSupp" RowCreate="@OnCreateRowSupp" Sort="@ResetSupp" Page="@ResetSupp" Filter="@ResetSupp" FilterMode="FilterMode.Simple" ColumnWidth="200px">
@@ -102,7 +103,8 @@
 
         </Columns>
     </RadzenDataGrid>
-
+    
+    //Porsiyonlar Tablosu
     <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Porsiyon Ekle" Click="@InsertRow" Disabled=@(portionToInsert != null || portionToUpdate != null) />
     <RadzenDataGrid @ref="portionsGrid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="DataGridEditMode.Single"
                     Data="@portionList" TItem="PortionDTO" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset" Page="@Reset" Filter="@Reset" FilterMode="FilterMode.Simple" ColumnWidth="200px">
@@ -152,10 +154,43 @@
 
         </Columns>
     </RadzenDataGrid>
+    
+    //Notlar Tablosu
+    <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Not Ekle" Click="@InsertRowNote" Disabled=@(noteToInsert != null || noteToUpdate != null) />
+    <RadzenDataGrid @ref="productNotesGrid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                    Data="@productNoteList" TItem="ProductNoteDTO" RowUpdate="@OnUpdateRowNote" RowCreate="@OnCreateRowNote" Sort="@ResetNote" Page="@ResetNote" Filter="@ResetNote" FilterMode="FilterMode.Simple" ColumnWidth="200px">
+        <Columns>
+            <RadzenDataGridColumn TItem="ProductNoteDTO" Context="ProductNoteDTO" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
+                <Template Context="ProductNoteDTO">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRowNote(ProductNoteDTO))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRowNote(ProductNoteDTO))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                </Template>
+                <EditTemplate Context="ProductNoteDTO">
+                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRowNote(ProductNoteDTO))">
+                    </RadzenButton>
+                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEditNote(ProductNoteDTO))">
+                    </RadzenButton>
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRowNote(ProductNoteDTO))">
+                    </RadzenButton>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="ProductNoteDTO" Property="Id" Title="Id" Width="120px" />
+            <RadzenDataGridColumn TItem="ProductNoteDTO" Property="Note" Title="Not">
+                <EditTemplate Context="ProductNoteDTO">
+                    <RadzenTextBox @bind-Value="ProductNoteDTO.Note" Style="width:100%; display: block" Name="Adı" />
+                    @* <RadzenRequiredValidator Text="ShipName is required" Component="ShipName" Popup="true" /> *@
+                </EditTemplate>
+            </RadzenDataGridColumn>
+
+
+        </Columns>
+    </RadzenDataGrid>
 
 
 
-   
+
 }
 
 
@@ -177,19 +212,24 @@
 
     private ProductDTO productModel = new ProductDTO();
     private PortionDTO portionModel = new PortionDTO();
+    private ProductNoteDTO productNoteModel = new ProductNoteDTO();
     private SupplementaryMaterialDTO supplementaryMaterialModel = new SupplementaryMaterialDTO();
 
     protected IEnumerable<ProductGroupDTO> ProductGroupList;
     protected IEnumerable<UnitDTO> UnitList;
     RadzenDataGrid<PortionDTO> portionsGrid;
+    RadzenDataGrid<ProductNoteDTO> productNotesGrid;
     RadzenDataGrid<SupplementaryMaterialDTO> supplementaryMaterialsGrid;
     protected IEnumerable<PortionDTO> portionList;
+    protected IEnumerable<ProductNoteDTO> productNoteList;
     protected IEnumerable<SupplementaryMaterialDTO> supplementaryMaterialList;
     private string pageTitle = "Yeni Ürün Ekle";
     private string addOrUpdate = "Kaydet";
 
     PortionDTO portionToInsert;
     PortionDTO portionToUpdate;
+    ProductNoteDTO noteToInsert;
+    ProductNoteDTO noteToUpdate;
     SupplementaryMaterialDTO supplementaryMeterialToInsert;
     SupplementaryMaterialDTO supplementaryMeterialToUpdate;
     void Reset()
@@ -202,6 +242,12 @@
         supplementaryMeterialToInsert = null;
         supplementaryMeterialToUpdate = null;
     }
+    void ResetNote()
+    {
+        noteToInsert = null;
+        noteToUpdate = null;
+    }
+
     async Task EditRow(PortionDTO portion)
     {
         portionToUpdate = portion;
@@ -212,6 +258,13 @@
         supplementaryMeterialToUpdate = supplementaryMaterial;
         await supplementaryMaterialsGrid.EditRow(supplementaryMaterial);
     }
+    async Task EditRowNote(ProductNoteDTO productNote)
+    {
+        noteToUpdate = productNote;
+        await productNotesGrid.EditRow(productNote);
+    }
+
+
     async void OnUpdateRow(PortionDTO portion)
     {
         try
@@ -235,7 +288,7 @@
     {
         try
         {
-            Reset();
+            ResetSupp();
             supplementaryMaterial.ProductId = ProductId;
             supplementaryMaterial.UpdatedDate = DateTime.Now;
             supplementaryMaterial.UpdatedUser = await localStorageService.GetItemAsStringAsync("email");
@@ -250,6 +303,29 @@
         }
 
     }
+    async void OnUpdateRowNote(ProductNoteDTO productNote)
+    {
+        try
+        {
+            ResetNote();
+            productNote.ProductId = ProductId;
+            productNote.UpdatedDate = DateTime.Now;
+            productNote.UpdatedUser = await localStorageService.GetItemAsStringAsync("email");
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            productNoteModel = await HttpClient.PostGetServiceResponseAsync<ProductNoteDTO, ProductNoteDTO>("api/ProductNote/update", productNote, token, true);
+            await productNotesGrid.Reload();
+            await OnInitializedAsync();
+       
+        }
+        catch (ApiException ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+
+    }
+
+
     async Task SaveRow(PortionDTO portion)
     {
         await portionsGrid.UpdateRow(portion);
@@ -262,6 +338,16 @@
         supplementaryMeterialToInsert = null;
         await OnInitializedAsync();
     }
+    async Task SaveRowNote(ProductNoteDTO productNote)
+    {
+        await productNotesGrid.UpdateRow(productNote);
+        noteToInsert = null;
+        await productNotesGrid.Reload();
+        await OnInitializedAsync();
+        
+    }
+
+
     void CancelEdit(PortionDTO portion)
     {
         Reset();
@@ -274,6 +360,14 @@
 
         supplementaryMaterialsGrid.CancelEditRow(supplementaryMaterial);
     }
+    void CancelEditNote(ProductNoteDTO productNote)
+    {
+        ResetNote();
+
+        productNotesGrid.CancelEditRow(productNote);
+    }
+
+
     async Task DeleteRow(PortionDTO portion)
     {
         Reset();
@@ -294,6 +388,19 @@
         await OnInitializedAsync();
         await supplementaryMaterialsGrid.Reload();
     }
+    async Task DeleteRowNote(ProductNoteDTO productNote)
+    {
+        ResetNote();
+
+
+        string token = await localStorageService.GetItemAsStringAsync("token");
+        bool deleted = await HttpClient.PostGetServiceResponseAsync<bool, Guid>("api/SupplementaryMaterial/Delete", productNote.Id, token, true);
+        await productNotesGrid.Reload();
+        await OnInitializedAsync();
+    
+    }
+
+
     async Task InsertRow()
     {
         portionToInsert = new PortionDTO();
@@ -304,6 +411,14 @@
         supplementaryMeterialToInsert = new SupplementaryMaterialDTO();
         await supplementaryMaterialsGrid.InsertRow(supplementaryMeterialToInsert);
     }
+    async Task InsertRowNote()
+    {
+        noteToInsert = new ProductNoteDTO();
+        await productNotesGrid.InsertRow(noteToInsert);
+    }
+
+
+
     async void OnCreateRow(PortionDTO portion)
     {
         try
@@ -343,10 +458,35 @@
 
         // NavigationManager.NavigateTo("/products/edit/"+ProductId);
     }
+    async void OnCreateRowNote(ProductNoteDTO productNote)
+    {
+        try
+        {
+            productNote.ProductId = ProductId;
+            productNote.CreateDate = DateTime.Now;
+            productNote.CreatedUser = await localStorageService.GetItemAsStringAsync("email");
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            productNoteModel = await HttpClient.PostGetServiceResponseAsync<ProductNoteDTO, ProductNoteDTO>("api/productnote/create", productNote, token, true);
+            noteToInsert = null;
+            await productNotesGrid.Reload();
+            await OnInitializedAsync();
+            
+        }
+        catch (ApiException ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+
+        // NavigationManager.NavigateTo("/products/edit/"+ProductId);
+    }
+
+
     void goBackGroupList()
     {
         NavigationManager.NavigateTo("/productlist");
     }
+
     protected async override Task OnInitializedAsync()
     {
         string token = await localStorageService.GetItemAsStringAsync("token");
@@ -359,6 +499,7 @@
                 pageTitle = "Ürün Güncelle";
                 addOrUpdate = "Güncelle";
                 portionList = await HttpClient.GetServiceResponseAsync<List<PortionDTO>>("api/portion/PortionsById/" + ProductId, token, true);
+                productNoteList = await HttpClient.GetServiceResponseAsync<List<ProductNoteDTO>>("api/ProductNote/ProductNotesById/" + ProductId, token, true);
                 supplementaryMaterialList = await HttpClient.GetServiceResponseAsync<List<SupplementaryMaterialDTO>>("api/SupplementaryMaterial/SupplementaryMaterialsById/" + ProductId, token, true);
                 productModel = await HttpClient.GetServiceResponseAsync<ProductDTO>("api/product/ProductById/" + ProductId, token, true);
             }
@@ -368,6 +509,7 @@
             }
         }
     }
+
     async Task editOrUpdate(ProductDTO productDTO)
     {
 
