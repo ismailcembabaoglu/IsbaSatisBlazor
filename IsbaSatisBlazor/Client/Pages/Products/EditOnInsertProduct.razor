@@ -35,7 +35,8 @@
                             <RadzenLabel Text="Fotoğraf" />
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
-                            <RadzenTextBox Style="width: 100%;" @bind-Value="productModel.Photo" Name="Photo" />
+                            <RadzenFileInput @bind-Value=@productModel.Photo @bind-FileName=@fileName @bind-FileSize=@fileSize TValue="string" class="w-100"
+                                             Change=@(args => OnChange(args, "FileInput")) Error=@(args => OnError(args, "FileInput")) />
                         </RadzenColumn>
                     </RadzenRow>
                     @*                     <RadzenRow AlignItems="AlignItems.Center">
@@ -209,7 +210,8 @@
     [Inject]
     ILocalStorageService localStorageService { get; set; }
 
-
+    string fileName;
+    long? fileSize;
     private ProductDTO productModel = new ProductDTO();
     private PortionDTO portionModel = new PortionDTO();
     private ProductNoteDTO productNoteModel = new ProductNoteDTO();
@@ -232,6 +234,14 @@
     ProductNoteDTO noteToUpdate;
     SupplementaryMaterialDTO supplementaryMeterialToInsert;
     SupplementaryMaterialDTO supplementaryMeterialToUpdate;
+    void OnChange(string value, string name)
+    {
+        // console.Log($"{name} value changed");
+    }
+    void OnError(UploadErrorEventArgs args, string name)
+    {
+        // console.Log($"{args.Message}");
+    }
     void Reset()
     {
         portionToInsert = null;

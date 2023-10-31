@@ -14,5 +14,6 @@ namespace IsbaSatisBlazor.Data.Models.BaseModel
         public string? UpdatedUser { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public string? Decription { get; set; }
+
     }
 }
