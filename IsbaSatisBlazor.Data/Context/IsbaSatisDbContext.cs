@@ -34,6 +34,8 @@ namespace IsbaSatisBlazor.Data.Context
         public virtual DbSet<SupplementaryMaterial> SupplementaryMaterials { get; set; }
         public virtual DbSet<SupplementaryMaterialMotion> SupplementaryMaterialMotions { get; set; }
         public virtual DbSet<Unit> Units { get; set; }
+        public virtual DbSet<LinkTest> LinkTests { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -82,6 +84,7 @@ namespace IsbaSatisBlazor.Data.Context
             modelBuilder.ApplyConfiguration(new UnitMap());
             modelBuilder.ApplyConfiguration(new UsersMap());
             modelBuilder.ApplyConfiguration(new ModelBaseMap());
+            modelBuilder.ApplyConfiguration(new LinkTestMap());
 
             base.OnModelCreating(modelBuilder);
         }

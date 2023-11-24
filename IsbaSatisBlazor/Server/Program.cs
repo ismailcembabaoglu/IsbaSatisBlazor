@@ -56,6 +56,9 @@ builder.Services.AddDbContext<IsbaSatisDbContext>(config =>
     config.UseSqlServer("Server=DESKTOP-SLOIL0F;Database=IsbaSatisBlazorTest3;User Id=sa;Password=17421742;TrustServerCertificate=True;");
     config.EnableSensitiveDataLogging();
 });
+builder.Services.AddCors(options =>
+     options.AddDefaultPolicy(builder =>
+     builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
 
 builder.Services.AddAuthentication(opt =>
 {
@@ -105,7 +108,12 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseCors(cors => cors
+.AllowAnyMethod()
+.AllowAnyHeader()
+.SetIsOriginAllowed(origin => true)
+.AllowCredentials()
+);
 app.UseAuthentication();
 app.UseAuthorization();
 

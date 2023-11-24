@@ -50,6 +50,9 @@ namespace IsbaSatisBlazor.Server.Services.Extensions
 
             CreateMap<ProductNote, ProductNoteDTO>();
             CreateMap<ProductNoteDTO, ProductNote>();
+            
+            CreateMap<LinkTest, LinkTestDTO>();
+            CreateMap<LinkTestDTO, LinkTest>();
 
 
 

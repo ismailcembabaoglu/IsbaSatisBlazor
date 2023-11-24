@@ -4,6 +4,7 @@ using IsbaSatisBlazor.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IsbaSatisBlazor.Data.Migrations
 {
     [DbContext(typeof(IsbaSatisDbContext))]
-    partial class IsbaSatisDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231113001651_mig_testsilinecek")]
+    partial class mig_testsilinecek
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -212,9 +215,6 @@ namespace IsbaSatisBlazor.Data.Migrations
                 {
                     b.HasBaseType("IsbaSatisBlazor.Data.Models.BaseModel.ModelBase");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Link")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -222,12 +222,6 @@ namespace IsbaSatisBlazor.Data.Migrations
                     b.Property<string>("Magaza")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PageEnd")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PageStart")
-                        .HasColumnType("int");
 
                     b.ToTable("Tests", (string)null);
                 });

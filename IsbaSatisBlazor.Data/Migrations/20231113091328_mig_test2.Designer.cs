@@ -4,6 +4,7 @@ using IsbaSatisBlazor.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IsbaSatisBlazor.Data.Migrations
 {
     [DbContext(typeof(IsbaSatisDbContext))]
-    partial class IsbaSatisDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231113091328_mig_test2")]
+    partial class mig_test2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
