@@ -10,7 +10,10 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using FluentValidation;
 using Microsoft.OpenApi.Models;
+using IsbaSatisBlazor.Shared.DTO;
+using IsbaSatisBlazor.Shared.Validators;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,8 +22,7 @@ ConfigurationManager configuration = builder.Configuration;
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-
-builder.Services.AddBlazoredModal();
+builder.Services.AddTransient<IValidator<ProductDTO>, ProductValidator>();
 builder.Services.AddSwaggerGen(c =>
 {
     var jwtSecurityScheme = new OpenApiSecurityScheme

@@ -11,7 +11,7 @@ namespace IsbaSatisBlazor.Shared.DTO
     {
         public string Barcode { get; set; }
         public string ProductName { get; set; }
-        public string Photo { get; set; }
+        public string? Photo { get; set; }
         public Guid ProductGroupId { get; set; }
         public string? GroupName { get; set; }
     }
