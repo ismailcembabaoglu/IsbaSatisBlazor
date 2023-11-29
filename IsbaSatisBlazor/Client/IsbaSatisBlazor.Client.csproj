@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Shared\IsbaSatisBlazor.Shared.csproj" />
-    <ProjectReference Include="..\TabBlazor\TabBlazor.csproj" />
   </ItemGroup>
 
   <ItemGroup>

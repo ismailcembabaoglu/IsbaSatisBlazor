@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using IsbaSatisBlazor.Server.Services.Infrastruce;
 using IsbaSatisBlazor.Server.Services.Services;
-using IsbaSatisBlazor.Server.Validators;
 using IsbaSatisBlazor.Shared.DTO;
 
 namespace IsbaSatisBlazor.Server.Services.Extensions
