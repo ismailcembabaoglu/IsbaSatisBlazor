@@ -27,7 +27,7 @@ namespace IsbaSatisBlazor.Server.Services.Extensions
 
             CreateMap<Users, UserDTO>();
             CreateMap<UserDTO, Users>()
-                .ForMember(x => x.Password, y => y.MapFrom(z => PasswordEncrypter.Encrypt(z.Password))) ;
+                .ForMember(x => x.Password, y => y.MapFrom(z => PasswordEncrypter.Encrypt(z.Password)));
 
             CreateMap<ProductGroup, ProductGroupDTO>();
             CreateMap<ProductGroupDTO, ProductGroup>();
@@ -37,20 +37,58 @@ namespace IsbaSatisBlazor.Server.Services.Extensions
             CreateMap<ProductDTO, Product>();
 
             CreateMap<Portion, PortionDTO>()
-                .ForMember(c=>c.ProductName,y=>y.MapFrom(z=>z.Product.ProductName))
-                .ForMember(c=>c.GroupName,y=>y.MapFrom(z=>z.Unit.GroupName));
+                .ForMember(c => c.ProductName, y => y.MapFrom(z => z.Product.ProductName))
+                .ForMember(c => c.GroupName, y => y.MapFrom(z => z.Unit.GroupName));
             CreateMap<PortionDTO, Portion>();
 
             CreateMap<SupplementaryMaterial, SupplementaryMaterialDTO>()
                 .ForMember(c => c.ProductName, y => y.MapFrom(z => z.Product.ProductName));
             CreateMap<SupplementaryMaterialDTO, SupplementaryMaterial>();
 
+            CreateMap<Adisyon, AdisyonDTO>()
+               .ForMember(c => c.CustomerName, y => y.MapFrom(z => z.Customer.CustomerName))
+               .ForMember(c => c.GarsonName, y => y.MapFrom(z => z.Garson.Name))
+               .ForMember(c => c.DeskName, y => y.MapFrom(z => z.Desk.Name));
+            CreateMap<AdisyonDTO, Adisyon>();
+
+            CreateMap<Address, AdressDTO>()
+                .ForMember(c => c.CustomerName, y => y.MapFrom(z => z.Customer.CustomerName))
+                .ForMember(c => c.CustomerSurname, y => y.MapFrom(z => z.Customer.CustomerSurname));
+            CreateMap<AdressDTO, Address>();
+
+            CreateMap<Customer, CustomerDTO>();
+            CreateMap<CustomerDTO, Customer>();
+
+            CreateMap<Desk, DeskDTO>()
+            .ForMember(c => c.DeskLocationName, y => y.MapFrom(z => z.DeskLocation.LocationName));
+            CreateMap<DeskDTO, Desk>();
+
+            CreateMap<Garson, GarsonDTO>();
+            CreateMap<GarsonDTO, Garson>();
+
+            CreateMap<PaymentMotion, PaymentMotionDTO>()
+            .ForMember(c => c.PaymentName, y => y.MapFrom(z => z.PaymentType.PaymentName));
+            CreateMap<PaymentMotionDTO, PaymentMotion>();
+
+            CreateMap<PaymentType, PaymentTypeDTO>();
+            CreateMap<PaymentTypeDTO, PaymentType>();
+
+            CreateMap<Phone, PhoneDTO>()
+            .ForMember(c => c.CustomerName, y => y.MapFrom(z => z.Customer.CustomerName))
+            .ForMember(c => c.CustomerSurname, y => y.MapFrom(z => z.Customer.CustomerSurname));
+            CreateMap<PhoneDTO, Phone>();
+
+            CreateMap<SupplementaryMaterialMotion, SupplementaryMaterialMotionDTO>()
+             .ForMember(c => c.SupplementaryMaterialName, y => y.MapFrom(z => z.SupplementaryMaterial.SupplementaryMaterialName));
+            CreateMap<SupplementaryMaterialMotionDTO, SupplementaryMaterialMotion>();
+
             CreateMap<Unit, UnitDTO>();
             CreateMap<UnitDTO, Unit>();
 
-            CreateMap<ProductNote, ProductNoteDTO>();
+            CreateMap<ProductNote, ProductNoteDTO>()
+                .ForMember(c=>c.ProductName,y=>y.MapFrom(z=>z.Product.ProductName));
             CreateMap<ProductNoteDTO, ProductNote>();
-            
+
             CreateMap<LinkTest, LinkTestDTO>();
             CreateMap<LinkTestDTO, LinkTest>();
 

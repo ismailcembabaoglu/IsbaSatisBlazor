@@ -13,5 +13,6 @@ namespace IsbaSatisBlazor.Shared.DTO
         public bool IsFull { get; set; }
         public int Capacity { get; set; }
         public Guid DeskLocationId { get; set; }
+        public string DeskLocationName { get; set; }
     }
 }

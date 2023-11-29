@@ -14,9 +14,9 @@ namespace IsbaSatisBlazor.Shared.DTO
         public decimal Discount { get; set; }
         public decimal TotalAmount { get; set; }
         public Guid? DeskId { get; set; }
-        public string DeskName { get; set; }
-        public string GarsonName { get; set; }
-        public string CustomerName { get; set; }
+        public string? DeskName { get; set; }
+        public string? GarsonName { get; set; }
+        public string? CustomerName { get; set; }
         public Guid? GarsonId { get; set; }
         public Guid? CustomerId { get; set; }
     }

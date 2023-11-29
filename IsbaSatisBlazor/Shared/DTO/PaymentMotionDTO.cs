@@ -11,7 +11,7 @@ namespace IsbaSatisBlazor.Shared.DTO
     {
         public decimal Price { get; set; }
         public Guid PaymentTypeId { get; set; }
-        public string PaymentName { get; set; }
+        public string? PaymentName { get; set; }
         public Guid AdisyonId { get; set; }
       
     }

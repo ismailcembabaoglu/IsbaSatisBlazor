@@ -16,7 +16,7 @@ namespace IsbaSatisBlazor.Shared.DTO
         public string District { get; set; }
         public string FullAddress { get; set; }
         public Guid CustomerId { get; set; }
-        public string CustomerName { get; set; }
-        public string CustomerSurname { get; set; }
+        public string? CustomerName { get; set; }
+        public string? CustomerSurname { get; set; }
     }
 }

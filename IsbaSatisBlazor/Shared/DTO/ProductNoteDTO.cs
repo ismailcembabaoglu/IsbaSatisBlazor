@@ -10,6 +10,7 @@ namespace IsbaSatisBlazor.Shared.DTO
     public class ProductNoteDTO:ModelBaseDTO
     {
         public Guid ProductId { get; set; }
+        public string? ProductName { get; set; }
         public string Note { get; set; }
     }
 }
