@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using IsbaSatisBlazor.Data.Context;
+using IsbaSatisBlazor.Data.Models;
 using IsbaSatisBlazor.Server.Services.Infrastruce;
 using IsbaSatisBlazor.Shared.DTO;
 using IsbaSatisBlazor.Shared.Utils;
@@ -38,6 +39,22 @@ namespace IsbaSatisBlazor.Server.Services.Services
             int result = await context.SaveChangesAsync();
 
             return mapper.Map<UserDTO>(dbUser);
+        }
+
+        public async Task<UserRoleDTO> CreateUserRole(UserRoleDTO UserRole)
+        {
+            var dbUserRole = await context.UserRoles.Where(i => i.RoleType == UserRole.RoleType).FirstOrDefaultAsync();
+
+            if (dbUserRole != null)
+                throw new Exception("Rol Zaten Mevcut");
+
+
+            dbUserRole = mapper.Map<Data.Models.UserRole>(UserRole);
+            dbUserRole.CreateDate = DateTime.Now;
+            await context.UserRoles.AddAsync(dbUserRole);
+            int result = await context.SaveChangesAsync();
+
+            return mapper.Map<UserRoleDTO>(dbUserRole);
         }
 
         public async Task<bool> DeleteUserById(Guid Id)
@@ -85,20 +102,27 @@ namespace IsbaSatisBlazor.Server.Services.Services
 
 
             UserLoginResponseDTO result = new UserLoginResponseDTO();
-
+            var dbUserRoles = await context.UserRoles.Where(c => c.UserId == dbUser.Id).ToListAsync();
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecurityKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expiry = DateTime.Now.AddDays(int.Parse(configuration["JwtExpiryInDays"].ToString()));
-
-            var claims = new[]
+            var claims=new List<Claim>();
+            claims.Add(new Claim(ClaimTypes.Email, EMail));
+            claims.Add(new Claim(ClaimTypes.Name, dbUser.FirstName + " " + dbUser.LastName));
+            claims.Add(new Claim(ClaimTypes.UserData, dbUser.Id.ToString()));
+            foreach (var role in dbUserRoles)
             {
-                new Claim(ClaimTypes.Email, EMail),
-                new Claim(ClaimTypes.Name, dbUser.FirstName + " " + dbUser.LastName),
-                new Claim(ClaimTypes.UserData, dbUser.Id.ToString())
-            };
+                claims.Add(new Claim(ClaimTypes.Role, role.RoleType.ToString()));
+            }
+            //var claims = new[]
+            //{
+            //    new Claim(ClaimTypes.Email, EMail),
+            //    new Claim(ClaimTypes.Name, dbUser.FirstName + " " + dbUser.LastName),
+            //    new Claim(ClaimTypes.UserData, dbUser.Id.ToString())
+            //};
+           
 
             var token = new JwtSecurityToken(configuration["JwtIssuer"], configuration["JwtAudience"], claims, null, expiry, creds);
-
             result.ApiToken = new JwtSecurityTokenHandler().WriteToken(token);
             result.User = mapper.Map<UserDTO>(dbUser);
 
@@ -118,6 +142,21 @@ namespace IsbaSatisBlazor.Server.Services.Services
             int result = await context.SaveChangesAsync();
 
             return mapper.Map<UserDTO>(dbUser);
+        }
+
+        public async Task<UserRoleDTO> UpdateUserRole(UserRoleDTO UserRole)
+        {
+            var dbUserRole = await context.UserRoles.Where(i => i.Id == UserRole.Id).FirstOrDefaultAsync();
+
+            if (dbUserRole == null)
+                throw new Exception("Kullanıcı bulunamadı");
+
+
+            mapper.Map(UserRole, dbUserRole);
+
+            int result = await context.SaveChangesAsync();
+
+            return mapper.Map<UserRoleDTO>(dbUserRole);
         }
     }
 }

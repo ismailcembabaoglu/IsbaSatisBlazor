@@ -9,8 +9,10 @@ namespace IsbaSatisBlazor.Server.Services.Infrastruce
         public Task<List<UserDTO>> GetUsers();
 
         public Task<UserDTO> CreateUser(UserDTO User);
+        public Task<UserRoleDTO> CreateUserRole(UserRoleDTO UserRole);
 
         public Task<UserDTO> UpdateUser(UserDTO User);
+        public Task<UserRoleDTO> UpdateUserRole(UserRoleDTO UserRole);
 
         public Task<bool> DeleteUserById(Guid Id);
 

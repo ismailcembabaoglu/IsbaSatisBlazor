@@ -46,6 +46,14 @@ namespace IsbaSatisBlazor.Server.Controllers
                 Value = await userService.CreateUser(User)
             };
         }
+        [HttpPost("UserRole/Create")]
+        public async Task<ServiceResponse<UserRoleDTO>> CreateUserRole([FromBody] UserRoleDTO UserRole)
+        {
+            return new ServiceResponse<UserRoleDTO>()
+            {
+                Value = await userService.CreateUserRole(UserRole)
+            };
+        }
 
         [HttpPost("Update")]
         public async Task<ServiceResponse<UserDTO>> UpdateUser([FromBody] UserDTO User)
@@ -53,6 +61,14 @@ namespace IsbaSatisBlazor.Server.Controllers
             return new ServiceResponse<UserDTO>()
             {
                 Value = await userService.UpdateUser(User)
+            };
+        }
+        [HttpPost("UserRole/Update")]
+        public async Task<ServiceResponse<UserRoleDTO>> UpdateUserRole([FromBody] UserRoleDTO UserRole)
+        {
+            return new ServiceResponse<UserRoleDTO>()
+            {
+                Value = await userService.UpdateUserRole(UserRole)
             };
         }
 
