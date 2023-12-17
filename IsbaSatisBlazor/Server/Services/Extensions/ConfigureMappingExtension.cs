@@ -89,6 +89,10 @@ namespace IsbaSatisBlazor.Server.Services.Extensions
                 .ForMember(c=>c.ProductName,y=>y.MapFrom(z=>z.Product.ProductName));
             CreateMap<ProductNoteDTO, ProductNote>();
 
+
+            CreateMap<UserRole, UserRoleDTO>();
+            CreateMap<UserRoleDTO, UserRole>();
+
             CreateMap<LinkTest, LinkTestDTO>();
             CreateMap<LinkTestDTO, LinkTest>();
 

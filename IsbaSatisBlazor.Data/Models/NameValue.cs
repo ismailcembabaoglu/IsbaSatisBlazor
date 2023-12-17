@@ -1,5 +1,4 @@
 ﻿using IsbaSatisBlazor.Data.Enums;
-using IsbaSatisBlazor.Data.Models.BaseModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace IsbaSatisBlazor.Data.Models
 {
-    public class UserRole:ModelBase
+    public class NameValue
     {
-        public Guid UserId { get; set; }
-        public Users Users { get; set; }
-        public string RoleType { get; set; }
+     
+            public string Name { get; set; }
+            public RoleType Id { get; set; }
+      
     }
 }

@@ -525,7 +525,7 @@
         }
     }
 
-    async Task editOrUpdate( ProductDTO productDTO)
+    async Task editOrUpdate(ProductDTO productDTO)
     {
 
         try
@@ -568,7 +568,7 @@
     {
         if (editContext.Validate())
         {
-          await  editOrUpdate((ProductDTO)editContext.Model);
+            await editOrUpdate((ProductDTO)editContext.Model);
         }
     }
     private object OnTransformModel(object model)

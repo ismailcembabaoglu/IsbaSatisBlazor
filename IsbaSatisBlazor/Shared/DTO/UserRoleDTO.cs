@@ -11,6 +11,6 @@ namespace IsbaSatisBlazor.Shared.DTO
     public class UserRoleDTO:ModelBaseDTO
     {
         public Guid UserId { get; set; }
-        public RoleType RoleType { get; set; }
+        public string RoleType { get; set; }
     }
 }

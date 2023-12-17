@@ -33,6 +33,7 @@ builder.Services.AddFormValidation(config => config.AddFluentValidation(typeof(P
 builder.Services.AddFormValidation(config => config.AddFluentValidation(typeof(ProductNoteDTO).Assembly));
 builder.Services.AddFormValidation(config => config.AddFluentValidation(typeof(SupplementaryMaterialDTO).Assembly));
 builder.Services.AddFormValidation(config => config.AddFluentValidation(typeof(SupplementaryMaterialMotionDTO).Assembly));
+builder.Services.AddFormValidation(config => config.AddFluentValidation(typeof(UserRoleDTO).Assembly));
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
 builder.Services.AddRadzenComponents();

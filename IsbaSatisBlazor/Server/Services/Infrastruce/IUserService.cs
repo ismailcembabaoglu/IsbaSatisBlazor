@@ -7,6 +7,7 @@ namespace IsbaSatisBlazor.Server.Services.Infrastruce
         public Task<UserDTO> GetUserById(Guid Id);
 
         public Task<List<UserDTO>> GetUsers();
+        public Task<List<UserRoleDTO>> GetUserRolesById(Guid Id);
 
         public Task<UserDTO> CreateUser(UserDTO User);
         public Task<UserRoleDTO> CreateUserRole(UserRoleDTO UserRole);
@@ -15,6 +16,7 @@ namespace IsbaSatisBlazor.Server.Services.Infrastruce
         public Task<UserRoleDTO> UpdateUserRole(UserRoleDTO UserRole);
 
         public Task<bool> DeleteUserById(Guid Id);
+        public Task<bool> DeleteUserRoleById(Guid Id);
 
         public Task<UserLoginResponseDTO> Login(string EMail, string Password);
     }

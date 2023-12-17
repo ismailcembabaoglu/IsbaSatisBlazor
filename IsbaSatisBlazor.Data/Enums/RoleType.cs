@@ -10,19 +10,20 @@ namespace IsbaSatisBlazor.Data.Enums
     public enum RoleType
     {
         [Description("Admin")]
-        admin =0,
+        Admin =0,
         [Description("Ürün")]
-        product =1,
+        Ürün =1,
         [Description("Kullanıcı")]
-        user =2,
+        Kullanıcı =2,
         [Description("Porsiyon")]
-        portion =3,
+        Porsiyon =3,
         [Description("Ürün Notları")]
-        productNote =4,
+        ÜrünNot =4,
         [Description("Ek Malzeme hareket")]
-        supplementaryMeterial =5,
+        EkMalzemeHareket =5,
         [Description("Ürün Grup")]
-        productGroup =6,
-
+        ÜrünGrup =6,
+        [Description("Ürün Birimleri")]
+        Birimler = 7,
     }
 }

@@ -74,13 +74,16 @@
 
                 if (res.Success)
                 {
-
+                    IEnumerable<UserRoleDTO>? userRoleList;
+                    userRoleList = await Client.GetServiceResponseAsync<List<UserRoleDTO>>("api/User/UserRolesById/" + res.Value.User.Id, res.Value.ApiToken, true);
                     await localStorageService.SetItemAsync("token", res.Value.ApiToken);
                     await localStorageService.SetItemAsync("email", res.Value.User.EMailAddress);
                     await localStorageService.SetItemAsync("UserId", res.Value.User.Id.ToString());
                     await localStorageService.SetItemAsync("UserFullName", res.Value.User.FullName);
+                    await localStorageService.SetItemAsync("userRoles", userRoleList);
 
-                    (AuthenticationStateProvider as AuthStateProvider).NotifyUserLogin(res.Value.User.EMailAddress);
+                    (AuthenticationStateProvider as AuthStateProvider).NotifyUserLogin(res.Value.User.EMailAddress,userRoleList);
+
 
                     Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", res.Value.ApiToken);
 
@@ -107,41 +110,41 @@
     {
         // console.Log($"{name} -> ResetPassword for user: {value}");
     }
-    private async Task loginProcess()
-    {
-        var httpReqRes = await Client.PostAsJsonAsync("api/User/Login", userLoginRequest);
+    // private async Task loginProcess()
+    // {
+    //     var httpReqRes = await Client.PostAsJsonAsync("api/User/Login", userLoginRequest);
 
-        if (httpReqRes.IsSuccessStatusCode)
-        {
-            try
-            {
-                var res = await httpReqRes.Content.ReadFromJsonAsync<ServiceResponse<UserLoginResponseDTO>>();
+    //     if (httpReqRes.IsSuccessStatusCode)
+    //     {
+    //         try
+    //         {
+    //             var res = await httpReqRes.Content.ReadFromJsonAsync<ServiceResponse<UserLoginResponseDTO>>();
 
-                if (res.Success)
-                {
+    //             if (res.Success)
+    //             {
 
-                    await localStorageService.SetItemAsync("token", res.Value.ApiToken);
-                    await localStorageService.SetItemAsync("email", res.Value.User.EMailAddress);
-                    await localStorageService.SetItemAsync("UserId", res.Value.User.Id.ToString());
-                    await localStorageService.SetItemAsync("UserFullName", res.Value.User.FullName);
+    //                 await localStorageService.SetItemAsync("token", res.Value.ApiToken);
+    //                 await localStorageService.SetItemAsync("email", res.Value.User.EMailAddress);
+    //                 await localStorageService.SetItemAsync("UserId", res.Value.User.Id.ToString());
+    //                 await localStorageService.SetItemAsync("UserFullName", res.Value.User.FullName);
 
-                    (AuthenticationStateProvider as AuthStateProvider).NotifyUserLogin(res.Value.User.EMailAddress);
+    //                 (AuthenticationStateProvider as AuthStateProvider).NotifyUserLogin(res.Value.User.EMailAddress);
 
-                    Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", res.Value.ApiToken);
+    //                 Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", res.Value.ApiToken);
 
-                    NavManeger.NavigateTo("/");
-                }
-                else
-                {
-                    await ModalManager.ShowMessageAsync("Login Error", res.Message);
-                }
-            }
-            catch (Exception ex)
-            {
-                await ModalManager.ShowMessageAsync("Login Error", ex.Message);
-            }
-        }
+    //                 NavManeger.NavigateTo("/");
+    //             }
+    //             else
+    //             {
+    //                 await ModalManager.ShowMessageAsync("Login Error", res.Message);
+    //             }
+    //         }
+    //         catch (Exception ex)
+    //         {
+    //             await ModalManager.ShowMessageAsync("Login Error", ex.Message);
+    //         }
+    //     }
 
-    }
+    // }
 
 }

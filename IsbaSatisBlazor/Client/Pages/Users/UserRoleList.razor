@@ -1,0 +1,122 @@
+﻿@page "/users/role/{UserId:guid}"
+@using IsbaSatisBlazor.Data.Enums
+@using IsbaSatisBlazor.Data.Enums.Helper
+@using IsbaSatisBlazor.Data.Models
+@using IsbaSatisBlazor.Shared.Extensions
+@using IsbaSatisBlazor.Shared.Validators
+@using Morris.Blazor.FluentValidation
+@using Morris.Blazor.Validation
+<div class="rz-p-12 rz-text-align-center">
+
+
+    <EditForm OnSubmit="editOrUpdate" Model="values">
+        <RadzenDropDown @bind-Value=values Data=@nameValues TextProperty="Name" ValueProperty="Name" Name="DropDownMultipleChips"
+                        Multiple=true AllowClear=true Placeholder="Select products" Chips=true Style="width: 100%; max-width: 400px;" />
+    </EditForm>
+
+
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center"  Gap="1rem" Class="rz-mt-8 rz-mb-4">
+        <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="Kaydet" BusyText="Kaydediliyor..." IsBusy=isbusy Click="editOrUpdate" />
+        <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Geri Dön" Click="@goBackGroupList" />
+    </RadzenStack>
+
+</div>
+@code {
+    [Parameter]
+    public Guid UserId { get; set; }
+    [Inject]
+    public HttpClient HttpClient { get; set; }
+
+    [Inject]
+    public ModalManager ModalManager { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+    [Inject]
+    ILocalStorageService localStorageService { get; set; }
+
+    List<string> values = new List<string>();
+    IEnumerable<UserRoleDTO>? userRoleList;
+    RoleType Role = new RoleType();
+    List<RoleType> roleTypes = new List<RoleType>();
+    List<NameValue> nameValues = new List<NameValue>();
+    bool isbusy;
+
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            String url = "api/Product/create";
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            foreach (RoleType item in Enum.GetValues(typeof(RoleType)))
+            {
+                nameValues.Add(new NameValue { Name = item.ToString(), Id = item });
+            }
+            userRoleList = await HttpClient.GetServiceResponseAsync<List<UserRoleDTO>>("api/User/UserRolesById/" + UserId, token, true);
+            if (userRoleList.Count() > 0)
+            {
+                foreach (var item in userRoleList)
+                {
+                    values.Add(item.RoleType);
+                }
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+
+
+    }
+    private object OnTransformModel(object model)
+    {
+        // Confirm that the model is of the expected type
+        // Do transformations here
+        // return the transformed model
+        return model;
+    }
+    void goBackGroupList()
+    {
+        NavigationManager.NavigateTo("/userlist");
+    }
+    async Task editOrUpdate()
+    {
+        try
+        {
+            isbusy = true;
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            bool delete = await HttpClient.PostGetServiceResponseAsync<bool, Guid>("api/user/UserRole/Delete", UserId, token, true);
+            foreach (var item in values)
+            {
+                UserRoleDTO userRoleModel = new UserRoleDTO();
+                userRoleModel.UserId = UserId;
+                userRoleModel.CreateDate = DateTime.Now;
+                userRoleModel.CreatedUser = await localStorageService.GetItemAsStringAsync("email");
+                userRoleModel.RoleType = item;
+                String url = "api/user/UserRoleCreate";
+                userRoleModel = await HttpClient.PostGetServiceResponseAsync<UserRoleDTO, UserRoleDTO>(url, userRoleModel, token, true);
+            }
+            await ModalManager.ShowMessageAsync("Başarılı","Roller Başarıyla Eklendi.");
+            isbusy = false;
+            // foreach (var item in userRoleList)
+            // {
+            //     values.Where(c => c.ToString() != item.RoleType).FirstOrDefault();
+            // }
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+        catch (Exception ex)
+        {
+            await ModalManager.ShowMessageAsync("Exception", ex.Message);
+        }
+
+    }
+
+}
