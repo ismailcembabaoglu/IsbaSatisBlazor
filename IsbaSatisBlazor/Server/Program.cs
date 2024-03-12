@@ -56,7 +56,7 @@ builder.Services.AddScoped<HttpContextAccessor>();
 builder.Services.AddAplicationServices();
 builder.Services.AddDbContext<IsbaSatisDbContext>(config =>
 {
-    config.UseSqlServer("Server=DESKTOP-SLOIL0F;Database=IsbaSatisBlazorTest3;User Id=sa;Password=17421742;TrustServerCertificate=True;");
+    config.UseNpgsql(configuration.GetConnectionString("PostgreSql"));
     config.EnableSensitiveDataLogging();
 });
 builder.Services.AddCors(options =>

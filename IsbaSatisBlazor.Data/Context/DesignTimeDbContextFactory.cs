@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +13,11 @@ namespace IsbaSatisBlazor.Data.Context
     {
         public IsbaSatisDbContext CreateDbContext(string[] args)
         {
-            String connectionString = "Server=DESKTOP-SLOIL0F;Database=IsbaSatisBlazorTest3;User Id=sa;Password=17421742;TrustServerCertificate=True;";
-
+            ConfigurationManager configurationManager = new ConfigurationManager();
+            configurationManager.SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../IsbaSatisBlazor/Server"));
+            configurationManager.AddJsonFile("appsettings.json");
             var builder = new DbContextOptionsBuilder<IsbaSatisDbContext>();
-
-            builder.UseSqlServer(connectionString);
-
+            builder.UseNpgsql(configurationManager.GetConnectionString("PostgreSql"));
             return new IsbaSatisDbContext(builder.Options);
         }
     }
