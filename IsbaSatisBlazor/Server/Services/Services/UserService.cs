@@ -112,10 +112,11 @@ namespace IsbaSatisBlazor.Server.Services.Services
 
         public async Task<List<UserRoleDTO>> GetUserRolesById(Guid Id)
         {
-            return await context.UserRoles.Include(c => c.Users)
+            var dbUserRole= await context.UserRoles.Include(c => c.Users)
                       .Where(c => c.UserId == Id)
                       .ProjectTo<UserRoleDTO>(mapper.ConfigurationProvider)
                       .ToListAsync();
+            return dbUserRole;
         }
 
         public async Task<UserLoginResponseDTO> Login(string EMail, string Password)

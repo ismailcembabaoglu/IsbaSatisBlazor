@@ -16,10 +16,16 @@ using IsbaSatisBlazor.Shared.DTO;
 using IsbaSatisBlazor.Shared.Validators;
 using System.Text;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
 // Add services to the container.
+var loggerFactory = LoggerFactory.Create(builder => {
+    builder.AddConsole();
+});
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -56,7 +62,10 @@ builder.Services.AddScoped<HttpContextAccessor>();
 builder.Services.AddAplicationServices();
 builder.Services.AddDbContext<IsbaSatisDbContext>(config =>
 {
-    config.UseNpgsql(configuration.GetConnectionString("PostgreSql"));
+    var dataSourceBuilder = new NpgsqlDataSourceBuilder(configuration.GetConnectionString("PostgreSql"));
+    config.UseLoggerFactory(loggerFactory).UseNpgsql(dataSourceBuilder.Build());
+    config.ConfigureWarnings(warnings => warnings.Ignore(CoreEventId.ManyServiceProvidersCreatedWarning));
+    config.UseNpgsql(dataSourceBuilder.Build());
     config.EnableSensitiveDataLogging();
 });
 builder.Services.AddCors(options =>

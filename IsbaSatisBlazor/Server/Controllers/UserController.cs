@@ -41,6 +41,7 @@ namespace IsbaSatisBlazor.Server.Controllers
             };
         }
         [HttpGet("UserRolesById/{Id}")]
+        [AllowAnonymous]
         public async Task<ServiceResponse<List<UserRoleDTO>>> GetUserRolesById(Guid Id)
         {
             return new ServiceResponse<List<UserRoleDTO>>()
@@ -84,6 +85,7 @@ namespace IsbaSatisBlazor.Server.Controllers
         }
 
         [HttpGet("UserById/{Id}")]
+       
         public async Task<ServiceResponse<UserDTO>> GetUserById(Guid Id)
         {
             return new ServiceResponse<UserDTO>()
@@ -102,6 +104,7 @@ namespace IsbaSatisBlazor.Server.Controllers
             };
         }
         [HttpPost("UserRole/Delete")]
+      
         public async Task<ServiceResponse<bool>> DeleteUserRole([FromBody] Guid id)
         {
             return new ServiceResponse<bool>()

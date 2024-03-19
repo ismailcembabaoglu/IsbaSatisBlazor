@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,8 @@ namespace IsbaSatisBlazor.Data.Context
             configurationManager.SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../IsbaSatisBlazor/Server"));
             configurationManager.AddJsonFile("appsettings.json");
             var builder = new DbContextOptionsBuilder<IsbaSatisDbContext>();
-            builder.UseNpgsql(configurationManager.GetConnectionString("PostgreSql"));
+            var dbDataSource = new NpgsqlDataSourceBuilder(configurationManager.GetConnectionString("PostgreSql"));
+            builder.UseNpgsql(dbDataSource.Build());
             return new IsbaSatisDbContext(builder.Options);
         }
     }
