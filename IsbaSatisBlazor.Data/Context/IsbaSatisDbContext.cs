@@ -5,16 +5,17 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Security;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace IsbaSatisBlazor.Data.Context
 {
-    public class IsbaSatisDbContext:DbContext
+    public class IsbaSatisDbContext : DbContext
     {
         public IsbaSatisDbContext(DbContextOptions<IsbaSatisDbContext> options) : base(options)
         {
-                
+
         }
         public virtual DbSet<Users> Users { get; set; }
         public virtual DbSet<Address> Addresses { get; set; }
@@ -34,6 +35,35 @@ namespace IsbaSatisBlazor.Data.Context
         public virtual DbSet<SupplementaryMaterial> SupplementaryMaterials { get; set; }
         public virtual DbSet<SupplementaryMaterialMotion> SupplementaryMaterialMotions { get; set; }
         public virtual DbSet<Unit> Units { get; set; }
+        public virtual DbSet<UserRole> UserRoles { get; set; }
+        public virtual DbSet<LinkTest> LinkTests { get; set; }
+
+
+        private void Seed(ModelBuilder modelBuilder)
+        {
+
+
+            modelBuilder.Entity<Users>().HasData(new Users
+            {
+                Id = Guid.Parse("822E044B-5656-4B44-AD0F-01D7761E2CBE"),
+                CreateDate = DateTime.UtcNow,
+                CreatedUser = "Admin",
+                EMailAddress = "icb1742@gmail.com",
+                Password = "MTc0MjE3NDI=",
+                FirstName = "Süper",
+                LastName = "Admin",
+                IsActive = true,
+
+            });
+            modelBuilder.Entity<UserRole>().HasData(new UserRole
+            {
+                Id = Guid.Parse("065F9027-8F58-412C-A5A4-42FC3E80D15F"),
+                CreateDate = DateTime.UtcNow,
+                CreatedUser = "Admin",
+                RoleType = "Kullanıcı",
+                UserId = Guid.Parse("822E044B-5656-4B44-AD0F-01D7761E2CBE"),
+            });
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -45,6 +75,7 @@ namespace IsbaSatisBlazor.Data.Context
             modelBuilder.Entity<Portion>().HasOne(c => c.Unit).WithMany(c => c.Portions).HasForeignKey(c => c.UnitId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<ProductNote>().HasOne(c => c.Product).WithMany(c => c.ProductNotes).HasForeignKey(c => c.ProductId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<ProductMotion>().HasOne(c => c.Portion).WithMany(c => c.ProductMotions).HasForeignKey(c => c.PortionId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<UserRole>().HasOne(c => c.Users).WithMany(c => c.UserRoles).HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.NoAction);
 
             //Musteri ilişkileri
             modelBuilder.Entity<Phone>().HasOne(c => c.Customer).WithMany(c => c.Phones).HasForeignKey(c => c.CustomerId).OnDelete(DeleteBehavior.NoAction);
@@ -82,8 +113,15 @@ namespace IsbaSatisBlazor.Data.Context
             modelBuilder.ApplyConfiguration(new UnitMap());
             modelBuilder.ApplyConfiguration(new UsersMap());
             modelBuilder.ApplyConfiguration(new ModelBaseMap());
+            modelBuilder.ApplyConfiguration(new LinkTestMap());
+            modelBuilder.ApplyConfiguration(new UserRoleMap());
+
+            Seed(modelBuilder);
+
 
             base.OnModelCreating(modelBuilder);
+
         }
     }
+
 }

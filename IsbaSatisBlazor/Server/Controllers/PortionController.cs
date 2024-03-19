@@ -1,21 +1,28 @@
-﻿using IsbaSatisBlazor.Server.Services.Infrastruce;
+﻿using IsbaSatisBlazor.Data.Enums;
+using IsbaSatisBlazor.Data.Enums.Helper;
+using IsbaSatisBlazor.Data.Models;
+using IsbaSatisBlazor.Server.Services.Extensions;
+using IsbaSatisBlazor.Server.Services.Infrastruce;
 using IsbaSatisBlazor.Server.Services.Services;
 using IsbaSatisBlazor.Shared.DTO;
+using IsbaSatisBlazor.Shared.Extensions;
 using IsbaSatisBlazor.Shared.ResponseModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Radzen.Blazor;
 
 namespace IsbaSatisBlazor.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles =RoleExtension.Portion)]
     public class PortionController : ControllerBase
     {
         private readonly IPortionService portionService;
         public PortionController(IPortionService PortionService)
         {
+         
             portionService= PortionService;
         }
         [HttpGet("Portions")]

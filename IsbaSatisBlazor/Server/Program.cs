@@ -10,17 +10,26 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using FluentValidation;
 using Microsoft.OpenApi.Models;
+using IsbaSatisBlazor.Shared.DTO;
+using IsbaSatisBlazor.Shared.Validators;
 using System.Text;
+using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
 // Add services to the container.
+var loggerFactory = LoggerFactory.Create(builder => {
+    builder.AddConsole();
+});
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-
-builder.Services.AddBlazoredModal();
+builder.Services.AddTransient<IValidator<ProductDTO>, ProductValidator>();
 builder.Services.AddSwaggerGen(c =>
 {
     var jwtSecurityScheme = new OpenApiSecurityScheme
@@ -53,13 +62,20 @@ builder.Services.AddScoped<HttpContextAccessor>();
 builder.Services.AddAplicationServices();
 builder.Services.AddDbContext<IsbaSatisDbContext>(config =>
 {
-    config.UseSqlServer("Server=DESKTOP-SLOIL0F;Database=IsbaSatisBlazorTest3;User Id=sa;Password=17421742;TrustServerCertificate=True;");
+    var dataSourceBuilder = new NpgsqlDataSourceBuilder(configuration.GetConnectionString("PostgreSql"));
+    config.UseLoggerFactory(loggerFactory).UseNpgsql(dataSourceBuilder.Build());
+    config.ConfigureWarnings(warnings => warnings.Ignore(CoreEventId.ManyServiceProvidersCreatedWarning));
+    config.UseNpgsql(dataSourceBuilder.Build());
     config.EnableSensitiveDataLogging();
 });
+builder.Services.AddCors(options =>
+     options.AddDefaultPolicy(builder =>
+     builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
 
 builder.Services.AddAuthentication(opt =>
 {
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
 .AddJwtBearer(options =>
@@ -72,7 +88,10 @@ builder.Services.AddAuthentication(opt =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = configuration["JwtIssuer"],
         ValidAudience = configuration["JwtAudience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecurityKey"]))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecurityKey"]
+        
+       
+        ))
     };
 });
 
@@ -105,7 +124,12 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseCors(cors => cors
+.AllowAnyMethod()
+.AllowAnyHeader()
+.SetIsOriginAllowed(origin => true)
+.AllowCredentials()
+);
 app.UseAuthentication();
 app.UseAuthorization();
 

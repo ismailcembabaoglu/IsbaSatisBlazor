@@ -11,7 +11,7 @@ namespace IsbaSatisBlazor.Data.Models
     {
         public string Barcode{ get; set; }
         public string ProductName { get; set; }
-        public string Photo { get; set; }
+        public string? Photo { get; set; }
         public ICollection<Portion>? Portions { get; set; }
         public ICollection<SupplementaryMaterial>? SupplementaryMaterials { get; set; }
         public Guid ProductGroupId { get; set; }

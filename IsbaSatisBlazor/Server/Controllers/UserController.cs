@@ -1,5 +1,8 @@
-﻿using IsbaSatisBlazor.Server.Services.Infrastruce;
+﻿using IsbaSatisBlazor.Server.Services.Extensions;
+using IsbaSatisBlazor.Server.Services.Infrastruce;
+using IsbaSatisBlazor.Server.Services.Services;
 using IsbaSatisBlazor.Shared.DTO;
+using IsbaSatisBlazor.Shared.Extensions;
 using IsbaSatisBlazor.Shared.ResponseModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +12,7 @@ namespace IsbaSatisBlazor.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles =RoleExtension.User)]
     public class UserController : ControllerBase
     {
         private readonly IUserService userService;
@@ -37,6 +40,15 @@ namespace IsbaSatisBlazor.Server.Controllers
                 Value = await userService.GetUsers()
             };
         }
+        [HttpGet("UserRolesById/{Id}")]
+        [AllowAnonymous]
+        public async Task<ServiceResponse<List<UserRoleDTO>>> GetUserRolesById(Guid Id)
+        {
+            return new ServiceResponse<List<UserRoleDTO>>()
+            {
+                Value = await userService.GetUserRolesById(Id)
+            };
+        }
 
         [HttpPost("Create")]
         public async Task<ServiceResponse<UserDTO>> CreateUser([FromBody] UserDTO User)
@@ -44,6 +56,14 @@ namespace IsbaSatisBlazor.Server.Controllers
             return new ServiceResponse<UserDTO>()
             {
                 Value = await userService.CreateUser(User)
+            };
+        }
+        [HttpPost("UserRoleCreate")]
+        public async Task<ServiceResponse<UserRoleDTO>> CreateUserRole([FromBody] UserRoleDTO UserRole)
+        {
+            return new ServiceResponse<UserRoleDTO>()
+            {
+                Value = await userService.CreateUserRole(UserRole)
             };
         }
 
@@ -55,8 +75,17 @@ namespace IsbaSatisBlazor.Server.Controllers
                 Value = await userService.UpdateUser(User)
             };
         }
+        [HttpPost("UserRole/Update")]
+        public async Task<ServiceResponse<UserRoleDTO>> UpdateUserRole([FromBody] UserRoleDTO UserRole)
+        {
+            return new ServiceResponse<UserRoleDTO>()
+            {
+                Value = await userService.UpdateUserRole(UserRole)
+            };
+        }
 
         [HttpGet("UserById/{Id}")]
+       
         public async Task<ServiceResponse<UserDTO>> GetUserById(Guid Id)
         {
             return new ServiceResponse<UserDTO>()
@@ -72,6 +101,15 @@ namespace IsbaSatisBlazor.Server.Controllers
             return new ServiceResponse<bool>()
             {
                 Value = await userService.DeleteUserById(id)
+            };
+        }
+        [HttpPost("UserRole/Delete")]
+      
+        public async Task<ServiceResponse<bool>> DeleteUserRole([FromBody] Guid id)
+        {
+            return new ServiceResponse<bool>()
+            {
+                Value = await userService.DeleteUserRoleById(id)
             };
         }
     }

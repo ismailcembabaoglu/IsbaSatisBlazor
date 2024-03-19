@@ -3,17 +3,17 @@ using System;
 using IsbaSatisBlazor.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace IsbaSatisBlazor.Data.Migrations
 {
     [DbContext(typeof(IsbaSatisDbContext))]
-    [Migration("20231030223023_mig_2")]
-    partial class mig_2
+    [Migration("20240319232142_mig_dataseed")]
+    partial class mig_dataseed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,36 +21,35 @@ namespace IsbaSatisBlazor.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.11")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("IsbaSatisBlazor.Data.Models.BaseModel.ModelBase", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("Id")
-                        .HasDefaultValueSql("NEWID()");
+                        .HasColumnType("uuid")
+                        .HasColumnName("Id");
 
                     b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedUser")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Decription")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UpdatedUser")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
@@ -66,28 +65,28 @@ namespace IsbaSatisBlazor.Data.Migrations
                     b.Property<string>("City")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasColumnType("character varying(30)");
 
                     b.Property<string>("County")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasColumnType("character varying(30)");
 
                     b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("District")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasColumnType("character varying(30)");
 
                     b.Property<string>("FullAddress")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<int>("PhoneAdressType")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasIndex("CustomerId");
 
@@ -99,27 +98,27 @@ namespace IsbaSatisBlazor.Data.Migrations
                     b.HasBaseType("IsbaSatisBlazor.Data.Models.BaseModel.ModelBase");
 
                     b.Property<int>("AdisyonDurum")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<Guid?>("CustomerId")
                         .IsRequired()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid?>("DeskId")
                         .IsRequired()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("Discount")
                         .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
+                        .HasColumnType("numeric(5,2)");
 
                     b.Property<Guid?>("GarsonId")
                         .IsRequired()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("TotalAmount")
                         .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("numeric(10,2)");
 
                     b.HasIndex("CustomerId");
 
@@ -130,18 +129,6 @@ namespace IsbaSatisBlazor.Data.Migrations
                     b.ToTable("Adisyons", (string)null);
                 });
 
-            modelBuilder.Entity("IsbaSatisBlazor.Data.Models.Araba", b =>
-                {
-                    b.HasBaseType("IsbaSatisBlazor.Data.Models.BaseModel.ModelBase");
-
-                    b.Property<string>("Color")
-                        .IsRequired()
-                        .HasMaxLength(110)
-                        .HasColumnType("nvarchar(110)");
-
-                    b.ToTable("Arabalar", (string)null);
-                });
-
             modelBuilder.Entity("IsbaSatisBlazor.Data.Models.Customer", b =>
                 {
                     b.HasBaseType("IsbaSatisBlazor.Data.Models.BaseModel.ModelBase");
@@ -149,25 +136,25 @@ namespace IsbaSatisBlazor.Data.Migrations
                     b.Property<string>("CardNumber")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("character varying(20)");
 
                     b.Property<string>("Company")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("CustomerName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("CustomerSurname")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<int>("CustomerType")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.ToTable("Customers", (string)null);
                 });
@@ -177,18 +164,18 @@ namespace IsbaSatisBlazor.Data.Migrations
                     b.HasBaseType("IsbaSatisBlazor.Data.Models.BaseModel.ModelBase");
 
                     b.Property<int>("Capacity")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("DeskLocationId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsFull")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.HasIndex("DeskLocationId");
 
@@ -201,7 +188,7 @@ namespace IsbaSatisBlazor.Data.Migrations
 
                     b.Property<string>("LocationName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.ToTable("DeskLocations", (string)null);
                 });
@@ -213,14 +200,38 @@ namespace IsbaSatisBlazor.Data.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Surname")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.ToTable("Garsons", (string)null);
+                });
+
+            modelBuilder.Entity("IsbaSatisBlazor.Data.Models.LinkTest", b =>
+                {
+                    b.HasBaseType("IsbaSatisBlazor.Data.Models.BaseModel.ModelBase");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Link")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Magaza")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("PageEnd")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PageStart")
+                        .HasColumnType("integer");
+
+                    b.ToTable("Tests", (string)null);
                 });
 
             modelBuilder.Entity("IsbaSatisBlazor.Data.Models.PaymentMotion", b =>
@@ -228,14 +239,14 @@ namespace IsbaSatisBlazor.Data.Migrations
                     b.HasBaseType("IsbaSatisBlazor.Data.Models.BaseModel.ModelBase");
 
                     b.Property<Guid>("AdisyonId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("PaymentTypeId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("numeric(10,2)");
 
                     b.HasIndex("AdisyonId");
 
@@ -251,7 +262,7 @@ namespace IsbaSatisBlazor.Data.Migrations
                     b.Property<string>("PaymentName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.ToTable("PaymentTypes", (string)null);
                 });
@@ -261,15 +272,15 @@ namespace IsbaSatisBlazor.Data.Migrations
                     b.HasBaseType("IsbaSatisBlazor.Data.Models.BaseModel.ModelBase");
 
                     b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("PhoneAdressType")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("character varying(20)");
 
                     b.HasIndex("CustomerId");
 
@@ -283,21 +294,21 @@ namespace IsbaSatisBlazor.Data.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("numeric(10,2)");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("SupplementaryMaterialMultiplier")
                         .HasPrecision(4, 2)
-                        .HasColumnType("decimal(4,2)");
+                        .HasColumnType("numeric(4,2)");
 
                     b.Property<Guid>("UnitId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasIndex("ProductId");
 
@@ -313,19 +324,18 @@ namespace IsbaSatisBlazor.Data.Migrations
                     b.Property<string>("Barcode")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("character varying(20)");
 
                     b.Property<string>("Photo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("ProductGroupId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("ProductName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.HasIndex("ProductGroupId");
 
@@ -338,7 +348,7 @@ namespace IsbaSatisBlazor.Data.Migrations
 
                     b.Property<string>("GroupName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.ToTable("ProductGroups", (string)null);
                 });
@@ -348,35 +358,35 @@ namespace IsbaSatisBlazor.Data.Migrations
                     b.HasBaseType("IsbaSatisBlazor.Data.Models.BaseModel.ModelBase");
 
                     b.Property<Guid>("AdisyonId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(8, 3)
-                        .HasColumnType("decimal(8,3)");
+                        .HasColumnType("numeric(8,3)");
 
                     b.Property<int>("OrderStatus")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("PortionId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("ProductMotionType")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("Sale")
                         .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
+                        .HasColumnType("numeric(5,2)");
 
                     b.Property<decimal>("SupplementaryMaterialPrice")
                         .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("numeric(10,2)");
 
                     b.Property<decimal>("UnitPrice")
                         .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("numeric(10,2)");
 
                     b.HasIndex("AdisyonId");
 
@@ -394,10 +404,10 @@ namespace IsbaSatisBlazor.Data.Migrations
                     b.Property<string>("Note")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasIndex("ProductId");
 
@@ -410,15 +420,15 @@ namespace IsbaSatisBlazor.Data.Migrations
 
                     b.Property<decimal>("Price")
                         .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("numeric(10,2)");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("SupplementaryMaterialName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.HasIndex("ProductId");
 
@@ -431,13 +441,13 @@ namespace IsbaSatisBlazor.Data.Migrations
 
                     b.Property<decimal>("Price")
                         .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("numeric(10,2)");
 
                     b.Property<Guid>("ProductMotionId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("SupplementaryMaterialId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasIndex("ProductMotionId");
 
@@ -452,9 +462,35 @@ namespace IsbaSatisBlazor.Data.Migrations
 
                     b.Property<string>("GroupName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.ToTable("Units", (string)null);
+                });
+
+            modelBuilder.Entity("IsbaSatisBlazor.Data.Models.UserRole", b =>
+                {
+                    b.HasBaseType("IsbaSatisBlazor.Data.Models.BaseModel.ModelBase");
+
+                    b.Property<string>("RoleType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("065f9027-8f58-412c-a5a4-42fc3e80d15f"),
+                            CreateDate = new DateTime(2024, 3, 19, 23, 21, 42, 213, DateTimeKind.Utc).AddTicks(9617),
+                            CreatedUser = "Admin",
+                            RoleType = "Kullanıcı",
+                            UserId = new Guid("822e044b-5656-4b44-ad0f-01d7761e2cbe")
+                        });
                 });
 
             modelBuilder.Entity("IsbaSatisBlazor.Data.Models.Users", b =>
@@ -464,27 +500,40 @@ namespace IsbaSatisBlazor.Data.Migrations
                     b.Property<string>("EMailAddress")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                        .HasColumnType("character varying(250)");
 
                     b.ToTable("Users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("822e044b-5656-4b44-ad0f-01d7761e2cbe"),
+                            CreateDate = new DateTime(2024, 3, 19, 23, 21, 42, 213, DateTimeKind.Utc).AddTicks(9193),
+                            CreatedUser = "Admin",
+                            EMailAddress = "icb1742@gmail.com",
+                            FirstName = "Süper",
+                            IsActive = true,
+                            LastName = "Admin",
+                            Password = "MTc0MjE3NDI="
+                        });
                 });
 
             modelBuilder.Entity("IsbaSatisBlazor.Data.Models.Address", b =>
@@ -664,6 +713,17 @@ namespace IsbaSatisBlazor.Data.Migrations
                     b.Navigation("SupplementaryMaterial");
                 });
 
+            modelBuilder.Entity("IsbaSatisBlazor.Data.Models.UserRole", b =>
+                {
+                    b.HasOne("IsbaSatisBlazor.Data.Models.Users", "Users")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("IsbaSatisBlazor.Data.Models.Adisyon", b =>
                 {
                     b.Navigation("PaymentMotions");
@@ -734,6 +794,11 @@ namespace IsbaSatisBlazor.Data.Migrations
             modelBuilder.Entity("IsbaSatisBlazor.Data.Models.Unit", b =>
                 {
                     b.Navigation("Portions");
+                });
+
+            modelBuilder.Entity("IsbaSatisBlazor.Data.Models.Users", b =>
+                {
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,6 +1,7 @@
 ﻿using IsbaSatisBlazor.Server.Services.Infrastruce;
 using IsbaSatisBlazor.Server.Services.Services;
 using IsbaSatisBlazor.Shared.DTO;
+using IsbaSatisBlazor.Shared.Extensions;
 using IsbaSatisBlazor.Shared.ResponseModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +11,7 @@ namespace IsbaSatisBlazor.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = RoleExtension.ProductNote)]
     public class ProductNoteController : ControllerBase
     {
         IProductNoteService productNoteService;

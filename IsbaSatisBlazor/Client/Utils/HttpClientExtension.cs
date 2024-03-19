@@ -1,7 +1,9 @@
 ﻿using IsbaSatisBlazor.Shared.CustomExceptions;
 using IsbaSatisBlazor.Shared.ResponseModels;
+using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json.Serialization;
 
 namespace IsbaSatisBlazor.Client.Utils
 {
@@ -9,8 +11,13 @@ namespace IsbaSatisBlazor.Client.Utils
     {
         public async static Task<TResult> PostGetServiceResponseAsync<TResult, TValue>(this HttpClient Client, String Url, TValue Value, string token, bool ThrowSuccessException = false)
         {
-            Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
-            var httpRes = await Client.PostAsJsonAsync(Url, Value);
+            var request = new HttpRequestMessage(HttpMethod.Post, Url);
+            var cont = JsonConvert.SerializeObject(Value, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
+            request.Content = new StringContent(cont, null, "application/json");
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+            var httpRes = await Client.SendAsync(request);
+            //Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+            //var httpRes = await Client.PostAsJsonAsync(Url, Value);
 
             if (httpRes.IsSuccessStatusCode)
             {

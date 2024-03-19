@@ -1,4 +1,5 @@
-﻿
+﻿@using IsbaSatisBlazor.Shared.Extensions
+
 <RadzenHeader>
 
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
@@ -7,26 +8,38 @@
     </RadzenStack>
 </RadzenHeader>
 
-<RadzenSidebar Style="width:auto">
+
 
 
     <AuthorizeView>
 
         <Authorized>
 
-               <RadzenSidebar @bind-Expanded="@sidebar2Expanded">
-            <RadzenPanelMenu DisplayStyle="@(sidebar1Expanded?MenuItemDisplayStyle.IconAndText:MenuItemDisplayStyle.Icon)" ShowArrow=false>
-                <RadzenPanelMenuItem Text="Anasayfa" Path="/" Icon="home" />
-                    <RadzenPanelMenuItem Text="Ürünler" Path="/productlist" Icon="home" />
-                <RadzenPanelMenuItem Text="Kullanıcı Listesi" Path="/userlist" Icon="account_circle" />
-                    <RadzenPanelMenuItem Text="Ürün Grup Listesi" Path="/productgrouplist" Icon="category" />
-                <RadzenPanelMenuItem Text="Çıkış Yap" Path="/logout" Icon="input" />
-               @*  <RadzenPanelMenuItem Text="UI Fundamentals" Icon="auto_awesome">
+            <RadzenSidebar Responsive=false Style="width: max-content" @bind-Expanded="@sidebar2Expanded">
+                <RadzenPanelMenu DisplayStyle="@(sidebar1Expanded?MenuItemDisplayStyle.IconAndText:MenuItemDisplayStyle.Icon)" ShowArrow=false>
+                    <RadzenPanelMenuItem Text="Anasayfa" Path="/" Icon="home" />
+                    <AuthorizeView Roles="@RoleExtension.Product" Context="innercontext">
+                        <RadzenPanelMenuItem Text="Ürünler" Path="/productlist" Icon="home" />
+                    </AuthorizeView>
+                    <AuthorizeView Roles="@RoleExtension.Units" Context="innercontext">
+                        <RadzenPanelMenuItem Text="Ürün Birimleri" Path="/unitlist" Icon="home" />
+                    </AuthorizeView>
+                    <AuthorizeView Roles="@RoleExtension.User" Context="innercontext">
+                        <RadzenPanelMenuItem Text="Kullanıcı Listesi" Path="/userlist" Icon="account_circle" />
+                    </AuthorizeView>
+
+                    <AuthorizeView Roles="@RoleExtension.ProductGroup" Context="innercontext">
+                        <RadzenPanelMenuItem Text="Ürün Grup Listesi" Path="/productgrouplist" Icon="category" />
+                    </AuthorizeView>
+
+
+                    <RadzenPanelMenuItem Text="Çıkış Yap" Path="/logout" Icon="input" />
+                    @*  <RadzenPanelMenuItem Text="UI Fundamentals" Icon="auto_awesome">
                     <RadzenPanelMenuItem Text="Themes" Icon="color_lens" />
                     <RadzenPanelMenuItem Text="Colors" Icon="invert_colors" />
-                </RadzenPanelMenuItem> *@
-            </RadzenPanelMenu>
-               </RadzenSidebar >
+                    </RadzenPanelMenuItem> *@
+                </RadzenPanelMenu>
+            </RadzenSidebar>
 
 
         </Authorized>
@@ -36,7 +49,7 @@
         </NotAuthorized>
 
     </AuthorizeView>
-</RadzenSidebar>
+
 
 
 

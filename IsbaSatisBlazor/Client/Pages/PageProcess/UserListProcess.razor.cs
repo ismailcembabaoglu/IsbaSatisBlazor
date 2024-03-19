@@ -37,6 +37,10 @@ namespace IsbaSatisBlazor.Client.Pages.PageProcess
         {
             NavigationManager.NavigateTo("/users/edit/" + UserId);
         }
+        protected void goRoleUserPage(Guid UserId)
+        {
+            NavigationManager.NavigateTo("/users/role/" + UserId);
+        }
 
         protected async Task DeleteUser(Guid Id)
         {

@@ -19,5 +19,7 @@ namespace IsbaSatisBlazor.Data.Models
         public string Password { get; set; }
 
         public bool IsActive { get; set; }
+        public ICollection<UserRole>? UserRoles { get; set; }
+
     }
 }

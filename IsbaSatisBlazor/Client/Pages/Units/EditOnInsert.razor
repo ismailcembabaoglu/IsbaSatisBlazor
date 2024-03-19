@@ -1,0 +1,122 @@
+﻿@page "/units/add"
+@page "/units/edit/{UnitId:guid}"
+@using IsbaSatisBlazor.Shared.Validators
+@using Morris.Blazor.FluentValidation
+@using Morris.Blazor.Validation
+<EditForm Model="@unitModel" OnValidSubmit="SubmitForm">
+    <Validate ValidationProperties=@(ValidationProperties.Set.FluentValidator<UnitsValidatar>()) OnTransformModel=OnTransformModel />
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenStack>
+            <RadzenFieldset Text="Grup Ekleme Sayfası">
+                <RadzenStack Gap="1rem">
+                  
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Grup Adı" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenTextBox Style="width: 100%;" @bind-Value="unitModel.GroupName" Name="GroupName" />
+                            <ValidationMessage For="@(() => unitModel.GroupName)" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                   
+                </RadzenStack>
+            </RadzenFieldset>
+        </RadzenStack>
+    </RadzenColumn>
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" Class="rz-mt-8 rz-mb-4">
+        <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="Kaydet" />
+        <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Geri Dön" Click="@goBackGroupList" />
+    </RadzenStack>
+</EditForm>
+@code {
+
+    [Parameter]
+    public Guid UnitId { get; set; }
+
+    [Inject]
+    public HttpClient HttpClient { get; set; }
+
+    [Inject]
+    public ModalManager ModalManager { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+    [Inject]
+    ILocalStorageService localStorageService { get; set; }
+    private UnitDTO unitModel = new UnitDTO();
+    protected async override Task OnInitializedAsync()
+    {
+        string token = await localStorageService.GetItemAsStringAsync("token");
+        if (UnitId != null && UnitId != Guid.Empty)
+        {
+            try
+            {
+           
+                unitModel = await HttpClient.GetServiceResponseAsync<UnitDTO>("api/unit/UnitById/" + UnitId, token, true);
+            }
+            catch (ApiException ex)
+            {
+                await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+            }
+        }
+    }
+
+    async Task editOrUpdate(UnitDTO unitDTO)
+    {
+
+        try
+        {
+
+            String url = "api/Unit/create";
+            unitModel = unitDTO;
+            // Update
+            if (UnitId != null && UnitId != Guid.Empty)
+            {
+                url = "api/unit/update";
+                unitModel.UpdatedDate = DateTime.Now;
+                unitModel.UpdatedUser = await localStorageService.GetItemAsStringAsync("email");
+            }
+            else
+            {
+                unitModel.CreateDate = DateTime.Now;
+                unitModel.CreatedUser = await localStorageService.GetItemAsStringAsync("email");
+            }
+            string token = await localStorageService.GetItemAsStringAsync("token");
+
+            unitModel = await HttpClient.PostGetServiceResponseAsync<UnitDTO, UnitDTO>(url, unitModel, token, true);
+
+            NavigationManager.NavigateTo("/productlist");
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+        catch (Exception ex)
+        {
+            await ModalManager.ShowMessageAsync("Exception", ex.Message);
+        }
+
+
+
+
+    }
+    async Task SubmitForm(EditContext editContext)
+    {
+        if (editContext.Validate())
+        {
+            await editOrUpdate((UnitDTO)editContext.Model);
+        }
+    }
+    private object OnTransformModel(object model)
+    {
+        // Confirm that the model is of the expected type
+        // Do transformations here
+        // return the transformed model
+        return model;
+    }
+    void goBackGroupList()
+    {
+        NavigationManager.NavigateTo("/productlist");
+    }
+}

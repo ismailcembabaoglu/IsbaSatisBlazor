@@ -1,7 +1,10 @@
 ﻿@page "/products/add"
 @page "/products/edit/{ProductId:guid}"
-
-<RadzenTemplateForm Data="@productModel" Submit="@((ProductDTO args) => { editOrUpdate(args); })">
+@using IsbaSatisBlazor.Shared.Validators;
+@using Morris.Blazor.FluentValidation;
+@using Morris.Blazor.Validation
+<EditForm Model="@productModel" OnValidSubmit="SubmitForm">
+    <Morris.Blazor.Validation.Validate ValidationProperties=@(ValidationProperties.Set.FluentValidator<ProductValidator>()) OnTransformModel=OnTransformModel />
     <RadzenColumn Size="12" SizeMD="6">
         <RadzenStack>
             <RadzenFieldset Text="Ürün Ekleme Sayfası">
@@ -12,6 +15,7 @@
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
                             <RadzenDropDown @bind-Value="productModel.ProductGroupId" AllowClear="true" Placeholder="seçim yapınız" Data="@ProductGroupList" Style="width: 100%;" TextProperty="GroupName" ValueProperty="Id" Name="Id"></RadzenDropDown>
+                            <ValidationMessage For="@(() => productModel.ProductGroupId)" />
                         </RadzenColumn>
                     </RadzenRow>
                     <RadzenRow AlignItems="AlignItems.Center">
@@ -20,6 +24,7 @@
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
                             <RadzenTextBox Style="width: 100%;" @bind-Value="productModel.ProductName" Name="ProductName" />
+                            <ValidationMessage For="@(() => productModel.ProductName)" />
                         </RadzenColumn>
                     </RadzenRow>
                     <RadzenRow AlignItems="AlignItems.Center">
@@ -63,7 +68,7 @@
         <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="@addOrUpdate" />
         <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Geri Dön" Click="@goBackGroupList" />
     </RadzenStack>
-</RadzenTemplateForm>
+</EditForm>
 @if (addOrUpdate == "Güncelle")
 {
     //Ek malzemeler tablosu
@@ -104,7 +109,7 @@
 
         </Columns>
     </RadzenDataGrid>
-    
+
     //Porsiyonlar Tablosu
     <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Porsiyon Ekle" Click="@InsertRow" Disabled=@(portionToInsert != null || portionToUpdate != null) />
     <RadzenDataGrid @ref="portionsGrid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="DataGridEditMode.Single"
@@ -155,7 +160,7 @@
 
         </Columns>
     </RadzenDataGrid>
-    
+
     //Notlar Tablosu
     <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Not Ekle" Click="@InsertRowNote" Disabled=@(noteToInsert != null || noteToUpdate != null) />
     <RadzenDataGrid @ref="productNotesGrid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="DataGridEditMode.Single"
@@ -210,13 +215,13 @@
     [Inject]
     ILocalStorageService localStorageService { get; set; }
 
+
     string fileName;
     long? fileSize;
     private ProductDTO productModel = new ProductDTO();
     private PortionDTO portionModel = new PortionDTO();
     private ProductNoteDTO productNoteModel = new ProductNoteDTO();
     private SupplementaryMaterialDTO supplementaryMaterialModel = new SupplementaryMaterialDTO();
-
     protected IEnumerable<ProductGroupDTO> ProductGroupList;
     protected IEnumerable<UnitDTO> UnitList;
     RadzenDataGrid<PortionDTO> portionsGrid;
@@ -325,7 +330,7 @@
             productNoteModel = await HttpClient.PostGetServiceResponseAsync<ProductNoteDTO, ProductNoteDTO>("api/ProductNote/update", productNote, token, true);
             await productNotesGrid.Reload();
             await OnInitializedAsync();
-       
+
         }
         catch (ApiException ex)
         {
@@ -354,7 +359,7 @@
         noteToInsert = null;
         await productNotesGrid.Reload();
         await OnInitializedAsync();
-        
+
     }
 
 
@@ -407,7 +412,7 @@
         bool deleted = await HttpClient.PostGetServiceResponseAsync<bool, Guid>("api/SupplementaryMaterial/Delete", productNote.Id, token, true);
         await productNotesGrid.Reload();
         await OnInitializedAsync();
-    
+
     }
 
 
@@ -480,7 +485,7 @@
             noteToInsert = null;
             await productNotesGrid.Reload();
             await OnInitializedAsync();
-            
+
         }
         catch (ApiException ex)
         {
@@ -494,7 +499,7 @@
 
     void goBackGroupList()
     {
-        NavigationManager.NavigateTo("/productlist");
+        NavigationManager.NavigateTo("/Unitlist");
     }
 
     protected async override Task OnInitializedAsync()
@@ -525,6 +530,7 @@
 
         try
         {
+
             String url = "api/Product/create";
             productModel = productDTO;
             // Update
@@ -555,6 +561,21 @@
         }
 
 
-    }
 
+
+    }
+    async Task SubmitForm(EditContext editContext)
+    {
+        if (editContext.Validate())
+        {
+            await editOrUpdate((ProductDTO)editContext.Model);
+        }
+    }
+    private object OnTransformModel(object model)
+    {
+        // Confirm that the model is of the expected type
+        // Do transformations here
+        // return the transformed model
+        return model;
+    }
 }

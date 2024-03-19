@@ -1,5 +1,7 @@
-﻿using IsbaSatisBlazor.Server.Services.Infrastruce;
+﻿using FluentValidation;
+using IsbaSatisBlazor.Server.Services.Infrastruce;
 using IsbaSatisBlazor.Server.Services.Services;
+using IsbaSatisBlazor.Shared.DTO;
 
 namespace IsbaSatisBlazor.Server.Services.Extensions
 {
@@ -14,6 +16,8 @@ namespace IsbaSatisBlazor.Server.Services.Extensions
             service.AddScoped<IPortionService, PortionService>();
             service.AddScoped<ISupplementaryMaterialService, SupplementaryMaterialService>();
             service.AddScoped<IProductNoteService, ProductNoteService>();
+            service.AddScoped<ILinktestService, LinktestService>();
+           
             return service;
         }
     }
