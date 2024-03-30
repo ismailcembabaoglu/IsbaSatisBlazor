@@ -15,7 +15,8 @@ namespace IsbaSatisBlazor.Shared.DTO
         public Guid ProductId { get; set; }
         public string? ProductName { get; set; }
         public Guid UnitId { get; set; }
-        public string? GroupName { get; set; }
+       
+        public string? UnitGroupName { get; set; }
 
     }
 }

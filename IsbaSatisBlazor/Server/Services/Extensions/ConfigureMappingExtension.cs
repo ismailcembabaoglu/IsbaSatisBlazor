@@ -38,7 +38,7 @@ namespace IsbaSatisBlazor.Server.Services.Extensions
 
             CreateMap<Portion, PortionDTO>()
                 .ForMember(c => c.ProductName, y => y.MapFrom(z => z.Product.ProductName))
-                .ForMember(c => c.GroupName, y => y.MapFrom(z => z.Unit.GroupName));
+                .ForMember(c => c.UnitGroupName, y => y.MapFrom(z => z.Unit.GroupName));
             CreateMap<PortionDTO, Portion>();
 
             CreateMap<SupplementaryMaterial, SupplementaryMaterialDTO>()
@@ -95,6 +95,17 @@ namespace IsbaSatisBlazor.Server.Services.Extensions
 
             CreateMap<LinkTest, LinkTestDTO>();
             CreateMap<LinkTestDTO, LinkTest>();
+
+            CreateMap<ProductMotion, ProductMotionDTO>()
+                .ForMember(c=>c.ProductName,y=>y.MapFrom(z=>z.Product.ProductName))
+                .ForMember(c=>c.Barcode,y=>y.MapFrom(z=>z.Product.Barcode))
+                .ForMember(c=>c.PortionName,y=>y.MapFrom(z=>z.Portion.Name))
+                .ForMember(c=>c.PortionPrice,y=>y.MapFrom(z=>z.Portion.Price))
+                .ForMember(c=>c.UnitName,y=>y.MapFrom(z=>z.Portion.Unit.GroupName))
+                .ForMember(c=>c.DeskName,y=>y.MapFrom(z=>z.Adisyon.Desk.Name))
+                .ForMember(c=>c.CustomerName,y=>y.MapFrom(z=>z.Adisyon.Customer.CustomerName));
+
+            CreateMap<ProductMotionDTO, ProductMotion>();
 
 
 

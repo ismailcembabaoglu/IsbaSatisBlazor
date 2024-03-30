@@ -17,6 +17,17 @@ namespace IsbaSatisBlazor.Server.Services.Extensions
             service.AddScoped<ISupplementaryMaterialService, SupplementaryMaterialService>();
             service.AddScoped<IProductNoteService, ProductNoteService>();
             service.AddScoped<ILinktestService, LinktestService>();
+            service.AddScoped<IAdisyonSevice, AdisyonSevice>();
+            service.AddScoped<IAdressService, AdressService>();
+            service.AddScoped<ICustomerService, CustomerService>();
+            service.AddScoped<IDeskLocationService, DeskLocationService>();
+            service.AddScoped<IDeskSevice, DeskSevice>();
+            service.AddScoped<IGarsonService, GarsonService>();
+            service.AddScoped<IPaymentMotionService, PaymentMotionService>();
+            service.AddScoped<IPhoneService, PhoneService>();
+            service.AddScoped<IProductMotionService, ProductMotionService>();
+            service.AddScoped<ISupplementaryMaterialMotionService, SupplementaryMaterialMotionService>();
+            
            
             return service;
         }

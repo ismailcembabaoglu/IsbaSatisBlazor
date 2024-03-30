@@ -25,5 +25,27 @@ namespace IsbaSatisBlazor.Data.Enums
         ÜrünGrup =6,
         [Description("Ürün Birimleri")]
         Birimler = 7,
+        [Description("Adresler")]
+        Adresler = 8,
+        [Description("Adisyonlar")]
+        Adisyonlar = 9,
+        [Description("Müşteriler")]
+        Müşteriler = 10,
+        [Description("Masalar")]
+        Masalar = 11,
+        [Description("Masa Konumu")]
+        MasaKonum = 12,
+        [Description("Garson")]
+        Garson = 13,
+        [Description("Ödeme Hareketi")]
+        ÖdemeHareketi =14,
+        [Description("Ödeme Tipi")]
+        ÖdemeTipi =15,
+        [Description("Telefon")]
+        Telefon =16,
+        [Description("Ürün Hareketi")]
+        ÜrünHareketi =17,
+        [Description("Ek Malzeme Hareketleri")]
+        EkMalzemeHareketleri =18,
     }
 }
