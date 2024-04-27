@@ -10,7 +10,7 @@ namespace IsbaSatisBlazor.Shared.DTO
 {
     public class AdressDTO:ModelBaseDTO
     {
-        public PhoneAdressType PhoneAdressType { get; set; }
+        public string PhoneAdressType { get; set; }
         public string City { get; set; }
         public string County { get; set; }
         public string District { get; set; }

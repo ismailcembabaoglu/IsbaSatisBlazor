@@ -48,21 +48,21 @@ namespace IsbaSatisBlazor.Server.Services.Services
         public async Task<AdressDTO> GetAdressById(Guid Id)
         {
             return await context.Addresses
-                .Where(i => i.Id == Id).Include(c => c.Customer).Include(c => c.PhoneAdressType)
+                .Where(i => i.Id == Id).Include(c => c.Customer)
                 .ProjectTo<AdressDTO>(mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync();
         }
 
         public async Task<List<AdressDTO>> GetAdresss()
         {
-            return await context.Addresses.Include(c => c.Customer).Include(c => c.PhoneAdressType)
+            return await context.Addresses.Include(c => c.Customer)
                     .ProjectTo<AdressDTO>(mapper.ConfigurationProvider)
                     .ToListAsync();
         }
 
         public async Task<List<AdressDTO>> GetAdresssById(Guid Id)
         {
-            return await context.Addresses.Include(c => c.Customer).Include(c => c.PhoneAdressType)
+            return await context.Addresses.Include(c => c.Customer)
                      .Where(c => c.CustomerId == Id)
                      .ProjectTo<AdressDTO>(mapper.ConfigurationProvider)
                      .ToListAsync();

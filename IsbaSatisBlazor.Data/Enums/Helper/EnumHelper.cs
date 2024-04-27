@@ -8,35 +8,32 @@ using System.Threading.Tasks;
 
 namespace IsbaSatisBlazor.Data.Enums.Helper
 {
-    public static class EnumHelper
+    public  class EnumHelper
     {
-        public static string GetDescription<T>(this T enumValue)
-            where T : struct, IConvertible
+        public static List<KeyValuePair<string, int>> GetEnumDescriptionAndValues<T>()
         {
-            if (!typeof(T).IsEnum)
-                return null;
+            Type enumType = typeof(T);
 
-            var description = enumValue.ToString();
-            var fieldInfo = enumValue.GetType().GetField(enumValue.ToString());
+            if (enumType.BaseType != typeof(Enum))
+                throw new ArgumentException("T is not Enum");
 
-            if (fieldInfo != null)
+            var result = new List<KeyValuePair<string, int>>();
+
+            foreach (var e in Enum.GetValues(typeof(T)))
             {
-                var attrs = fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), true);
-                if (attrs != null && attrs.Length > 0)
-                {
-                    description = ((DescriptionAttribute)attrs[0]).Description;
-                }
+                var field = e.GetType().GetField(e.ToString());
+                var attributes = (DescriptionAttribute[])field.GetCustomAttributes(typeof(DescriptionAttribute), false);
+
+                result.Add(new KeyValuePair<string, int>((attributes.Length > 0) ? attributes[0].Description : e.ToString(), (int)e));
             }
 
-            return description;
+            return result;
         }
-
-
         //public static List<NameValue> EnumToList<T>()
         //{
         //    var array = (T[])(Enum.GetValues(typeof(T)).Cast<T>());
         //    var array2 = Enum.GetNames(typeof(T)).ToArray<string>();
-            
+
         //    List<NameValue> lst = null;
         //    for (int i = 0; i < array.Length; i++)
         //    {

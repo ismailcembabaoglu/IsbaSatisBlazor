@@ -23,7 +23,7 @@ namespace IsbaSatisBlazor.Server.Services.Services
             var dbCustomer = await context.Customers.Where(i => i.Id == Customer.Id).FirstOrDefaultAsync();
 
             if (dbCustomer != null)
-                throw new Exception("Ürün Zaten Mevcut");
+                throw new Exception("Müşteri Zaten Mevcut");
 
 
             dbCustomer = mapper.Map<Data.Models.Customer>(Customer);
@@ -47,7 +47,7 @@ namespace IsbaSatisBlazor.Server.Services.Services
 
         public async Task<List<CustomerDTO>> GetCustomers()
         {
-            return await context.Customers.Include(c => c.CustomerType)
+            return await context.Customers
                    .ProjectTo<CustomerDTO>(mapper.ConfigurationProvider)
                    .ToListAsync();
         }
@@ -55,7 +55,7 @@ namespace IsbaSatisBlazor.Server.Services.Services
         public async Task<CustomerDTO> GetUCustomerById(Guid Id)
         {
             return await context.Customers
-                  .Where(i => i.Id == Id).Include(c => c.CustomerType)
+                  .Where(i => i.Id == Id)
                   .ProjectTo<CustomerDTO>(mapper.ConfigurationProvider)
                   .FirstOrDefaultAsync();
         }

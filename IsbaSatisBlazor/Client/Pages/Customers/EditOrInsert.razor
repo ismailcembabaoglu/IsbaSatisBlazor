@@ -1,0 +1,373 @@
+﻿@page "/customers/add"
+@page "/customers/edit/{CustomerId:guid}"
+@using IsbaSatisBlazor.Data.Enums
+@using IsbaSatisBlazor.Data.Enums.Helper
+@using IsbaSatisBlazor.Data.Models
+@using IsbaSatisBlazor.Shared.Validators
+@using Morris.Blazor.FluentValidation
+@using Morris.Blazor.Validation
+<RadzenTabs @bind-SelectedIndex=@selectedIndex>
+    <Tabs>
+        <RadzenTabsItem Text="Müşteri">
+            <EditForm Model="@customerModel" OnValidSubmit="SubmitForm">
+    <Morris.Blazor.Validation.Validate ValidationProperties=@(ValidationProperties.Set.FluentValidator<CustomerValidator>()) OnTransformModel=OnTransformModel />
+
+                <RadzenRow Gap="1rem">
+                    <RadzenColumn>
+                        <RadzenStack>
+
+                            <RadzenFormField AllowFloatingLabel="false" Text="Müşteri Adı">
+                                <Start>
+                                    <RadzenIcon Icon="account_circle" />
+                                </Start>
+                                <ChildContent>
+                                    <RadzenTextBox @bind-Value="customerModel.CustomerName" Name="CustomerName" />
+                                </ChildContent>
+
+                            </RadzenFormField>
+                            <ValidationMessage style="font-size:x-small" For="@(() => customerModel.CustomerName)" />
+                            <RadzenFormField AllowFloatingLabel="false" Text="Müşteri Soyadı">
+                                <Start>
+                                    <RadzenIcon Icon="account_balance_wallet" />
+                                </Start>
+                                <ChildContent>
+                                    <RadzenTextBox @bind-Value="customerModel.CustomerSurname" Name="CustomerSurname" />
+                                </ChildContent>
+                            </RadzenFormField>
+                            <ValidationMessage style="font-size:x-small" For="@(() => customerModel.CustomerSurname)" />
+                            <RadzenFormField AllowFloatingLabel="false" Text="Şirket Adı">
+                                <Start>
+                                    <RadzenIcon Icon="flight_land" />
+                                </Start>
+                                <ChildContent>
+                                    <RadzenTextBox @bind-Value="customerModel.Company" Name="Company" />
+
+                                </ChildContent>
+
+                            </RadzenFormField>
+                            <ValidationMessage style="font-size:x-small" For="@(() => customerModel.Company)" />
+                        </RadzenStack>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <RadzenStack>
+                            <RadzenFormField AllowFloatingLabel="false" Text="Müşteri Kart No">
+                                <Start>
+                                    <RadzenIcon Icon="flight_takeoff" />
+                                </Start>
+                                <ChildContent>
+                                    <RadzenTextBox @bind-Value="customerModel.CardNumber" Name="CardNumber" />
+
+                                </ChildContent>
+                            </RadzenFormField>
+                            <ValidationMessage style="font-size:x-small" For="@(() => customerModel.CardNumber)" />
+
+                            <RadzenFormField AllowFloatingLabel="false" Text="Dönüş Uçuş No">
+                                <Start>
+                                    <RadzenIcon Icon="flight_takeoff" />
+                                </Start>
+                                <ChildContent>
+                                    <RadzenDropDown @bind-Value="customerModel.CustomerType" AllowClear="true" Placeholder="seçim yapınız" Data="@nameValues" Style="width: 100%;" TextProperty="Name" ValueProperty="Name" Name="Name"></RadzenDropDown>
+                                </ChildContent>
+                            </RadzenFormField>
+                            <ValidationMessage style="font-size:x-small" For="@(() => customerModel.CustomerType)" />
+                            <RadzenFormField AllowFloatingLabel="false" Text="Not">
+                                <Start>
+                                    <RadzenIcon Icon="description" />
+                                </Start>
+                                <ChildContent>
+                                    <RadzenTextArea Placeholder="Not giriniz" @bind-Value="customerModel.Decription" class="w-100" aria-label="TextArea with placeholder" />
+                                </ChildContent>
+                            </RadzenFormField>
+                            <ValidationMessage style="font-size:x-small" For="@(() => customerModel.Decription)" />
+                        </RadzenStack>
+
+
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" Class="rz-mt-8 rz-mb-4">
+                    <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="Kaydet" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Geri Dön" Click="@goBackCustomerList" />
+                </RadzenStack>
+    </EditForm>
+          
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Adres" Disabled=disabled>
+            <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Adres Ekle" Click="@InsertRowNote" Disabled=@(noteToInsert != null || noteToUpdate != null) />
+            <RadzenDataGrid @ref="adressGrid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                            Data="@adressList" TItem="AdressDTO" RowUpdate="@OnUpdateRowNote" RowCreate="@OnCreateRowNote" Sort="@ResetNote" Page="@ResetNote" Filter="@ResetNote" FilterMode="FilterMode.Simple" ColumnWidth="200px">
+                <Columns>
+                    <RadzenDataGridColumn TItem="AdressDTO" Context="AdressDTO" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
+                        <Template Context="AdressDTO">
+                            <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRowNote(AdressDTO))" @onclick:stopPropagation="true">
+                            </RadzenButton>
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRowNote(AdressDTO))" @onclick:stopPropagation="true">
+                            </RadzenButton>
+                        </Template>
+                        <EditTemplate Context="AdressDTO">
+                            <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRowNote(AdressDTO))">
+                            </RadzenButton>
+                            <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEditNote(AdressDTO))">
+                            </RadzenButton>
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRowNote(AdressDTO))">
+                            </RadzenButton>
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="AdressDTO" Property="City" Title="Şehir">
+                        <EditTemplate Context="AdressDTO">
+                            <RadzenTextBox @bind-Value="AdressDTO.City" Style="width:100%; display: block" Name="Adı" />
+                            @* <RadzenRequiredValidator Text="ShipName is required" Component="ShipName" Popup="true" /> *@
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="AdressDTO" Property="County" Title="İlçe">
+                        <EditTemplate Context="AdressDTO">
+                            <RadzenTextBox @bind-Value="AdressDTO.County" Style="width:100%; display: block" Name="Adı" />
+                            @* <RadzenRequiredValidator Text="ShipName is required" Component="ShipName" Popup="true" /> *@
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="AdressDTO" Property="District" Title="Mahalle">
+                        <EditTemplate Context="AdressDTO">
+                            <RadzenTextBox @bind-Value="AdressDTO.District" Style="width:100%; display: block" Name="District" />
+                            @* <RadzenRequiredValidator Text="ShipName is required" Component="ShipName" Popup="true" /> *@
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="AdressDTO" Property="FullAddress" Title="Mahalle">
+                        <EditTemplate Context="AdressDTO">
+                            <RadzenTextArea Placeholder="Not giriniz" @bind-Value="AdressDTO.FullAddress" Style="width:100%; display: block" Name="FullAddress" />
+                            @* <RadzenRequiredValidator Text="ShipName is required" Component="ShipName" Popup="true" /> *@
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="AdressDTO" Property="PhoneAdressType" Title="Adres Tipi">
+                        <EditTemplate Context="AdressDTO">
+                            <RadzenDropDown @bind-Value="AdressDTO.PhoneAdressType" AllowClear="true" Placeholder="seçim yapınız" Data="@phoneTypes" Style="width:100%; display: block" TextProperty="Name" ValueProperty="Name" Name="Name" />
+                            <RadzenTextArea Placeholder="Not giriniz" @bind-Value="AdressDTO.FullAddress" Style="width:100%; display: block" Name="FullAddress" />
+                            @* <RadzenRequiredValidator Text="ShipName is required" Component="ShipName" Popup="true" /> *@
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+
+
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Telefon" Disabled=@disabled>
+            Order Details
+        </RadzenTabsItem>
+    </Tabs>
+</RadzenTabs>
+@code {
+    [Parameter]
+    public Guid CustomerId { get; set; }
+
+    [Inject]
+    public HttpClient HttpClient { get; set; }
+
+    [Inject]
+    public ModalManager ModalManager { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+    [Inject]
+    ILocalStorageService localStorageService { get; set; }
+    private CustomerDTO customerModel = new CustomerDTO();
+    RadzenDataGrid<AdressDTO> adressGrid;
+    private AdressDTO adressModel = new AdressDTO();
+    protected IEnumerable<AdressDTO> adressList;
+    List<CustomerTypeNameValue> nameValues = new List<CustomerTypeNameValue>();
+    List<CustomerTypeNameValue> phoneTypes = new List<CustomerTypeNameValue>();
+    int selectedIndex = 0;
+    bool disabled = true;
+    AdressDTO noteToInsert;
+    AdressDTO noteToUpdate;
+    protected override async Task OnInitializedAsync()
+    {
+        string token = await localStorageService.GetItemAsStringAsync("token");
+
+        var ss = EnumHelper.GetEnumDescriptionAndValues<CustomerType>();
+        foreach (var item in ss)
+        {
+            nameValues.Add(new CustomerTypeNameValue { Name = item.Key, Id = item.Value });
+        }
+
+        if (CustomerId != null && CustomerId != Guid.Empty)
+        {
+            try
+            {
+
+
+                customerModel = await HttpClient.GetServiceResponseAsync<CustomerDTO>("api/customer/CustomerById/" + CustomerId, token, true);
+                disabled = false;
+                if (!disabled)
+                {
+                    var phone = EnumHelper.GetEnumDescriptionAndValues<PhoneAdressType>();
+                    foreach (var item in phone)
+                    {
+                        phoneTypes.Add(new CustomerTypeNameValue { Name = item.Key, Id = item.Value });
+                    }
+                    adressList = await HttpClient.GetServiceResponseAsync<List<AdressDTO>>("api/address/AdresssById/" + CustomerId, token, true);
+                }
+            }
+            catch (ApiException ex)
+            {
+                await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+            }
+            catch (Exception ex)
+            {
+
+                await ModalManager.ShowMessageAsync("Exception", ex.Message);
+            }
+        }
+
+    }
+    async Task SubmitForm(EditContext editContext)
+    {
+        if (editContext.Validate())
+        {
+            await editOrUpdate((CustomerDTO)editContext.Model);
+        }
+    }
+    async Task editOrUpdate(CustomerDTO customerDTO)
+    {
+
+        try
+        {
+
+            String url = "api/customer/create";
+            customerModel = customerDTO;
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            // Update
+            if (CustomerId != null && CustomerId != Guid.Empty)
+            {
+                url = "api/customer/update";
+                customerModel.UpdatedDate = DateTime.Now;
+                customerModel.UpdatedUser = await localStorageService.GetItemAsStringAsync("email");
+                customerModel = await HttpClient.PostGetServiceResponseAsync<CustomerDTO, CustomerDTO>(url, customerModel, token, true);
+            }
+            else
+            {
+                customerModel.CreateDate = DateTime.Now;
+                customerModel.CreatedUser = await localStorageService.GetItemAsStringAsync("email");
+                customerModel = await HttpClient.PostGetServiceResponseAsync<CustomerDTO, CustomerDTO>(url, customerModel, token, true);
+                CustomerId = customerModel.Id;
+                NavigationManager.NavigateTo($"/customers/edit/{CustomerId}",true);
+             
+
+            }
+
+
+
+
+
+
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+        catch (Exception ex)
+        {
+            await ModalManager.ShowMessageAsync("Exception", ex.Message);
+        }
+
+
+
+
+    }
+    private object OnTransformModel(object model)
+    {
+        // Confirm that the model is of the expected type
+        // Do transformations here
+        // return the transformed model
+        return model;
+    }
+    void goBackCustomerList()
+    {
+        NavigationManager.NavigateTo("/customers");
+    }
+
+    async Task DeleteRowNote(AdressDTO adress)
+    {
+        ResetNote();
+
+
+        string token = await localStorageService.GetItemAsStringAsync("token");
+        bool deleted = await HttpClient.PostGetServiceResponseAsync<bool, Guid>("api/address/Delete", adress.Id, token, true);
+        await adressGrid.Reload();
+        await OnInitializedAsync();
+        StateHasChanged();
+
+    }
+    void CancelEditNote(AdressDTO adress)
+    {
+        ResetNote();
+
+        adressGrid.CancelEditRow(adress);
+    }
+    async Task SaveRowNote(AdressDTO adress)
+    {
+        await adressGrid.UpdateRow(adress);
+        noteToInsert = null;
+        await adressGrid.Reload();
+        StateHasChanged();
+
+    }
+    async void OnUpdateRowNote(AdressDTO adress)
+    {
+        try
+        {
+            ResetNote();
+            adress.CustomerId = CustomerId;
+            adress.UpdatedDate = DateTime.Now;
+            adress.UpdatedUser = await localStorageService.GetItemAsStringAsync("email");
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            adressModel = await HttpClient.PostGetServiceResponseAsync<AdressDTO, AdressDTO>("api/address/update", adress, token, true);
+            await adressGrid.Reload();
+            await OnInitializedAsync();
+            StateHasChanged();
+
+        }
+        catch (ApiException ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+
+    }
+    async Task EditRowNote(AdressDTO adress)
+    {
+        noteToUpdate = adress;
+        await adressGrid.EditRow(adress);
+    }
+    void ResetNote()
+    {
+        noteToInsert = null;
+        noteToUpdate = null;
+    }
+    async Task InsertRowNote()
+    {
+        noteToInsert = new AdressDTO();
+        await adressGrid.InsertRow(noteToInsert);
+        StateHasChanged();
+    }
+    async void OnCreateRowNote(AdressDTO adress)
+    {
+        try
+        {
+            adress.CustomerId = CustomerId;
+            adress.CreateDate = DateTime.Now;
+            adress.CreatedUser = await localStorageService.GetItemAsStringAsync("email");
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            adressModel = await HttpClient.PostGetServiceResponseAsync<AdressDTO, AdressDTO>("api/address/create", adress, token, true);
+            noteToInsert = null;
+            await adressGrid.Reload();
+            await OnInitializedAsync();
+            StateHasChanged();
+
+        }
+        catch (ApiException ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+
+        // NavigationManager.NavigateTo("/products/edit/"+ProductId);
+    }
+}

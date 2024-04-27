@@ -1,0 +1,100 @@
+﻿@page "/customers"
+@if (CustomerList != null)
+{
+
+    <RadzenButton Shade="Shade.Dark" Click=goCreateCustomerPage Icon="add" Variant="Variant.Flat" Text="Yeni Müşteri Ekle" ButtonStyle="ButtonStyle.Success" />
+    <RadzenDataGrid AllowFiltering="true"
+                    FilterMode="FilterMode.Simple"
+                    ShowCellDataAsTooltip="true"
+                    ColumnWidth="200px"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    AllowColumnPicking="true"
+                    AllowPaging="true" PageSize="10"
+                    AllowSorting="true" Data="@CustomerList"
+                    TItem="CustomerDTO">
+        <Columns>
+            <RadzenDataGridColumn TItem="CustomerDTO" Context="customer" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
+                <Template Context="customer">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(() => goUpdateCustomerPage(customer.Id))">
+                    </RadzenButton>
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(() => DeleteCustomer(customer.Id))">
+                    </RadzenButton>
+                </Template>
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="CustomerDTO" Property="CustomerType" Title="Müşteri Tipi" />
+            <RadzenDataGridColumn TItem="CustomerDTO" Property="CustomerName" Title="Müşteri Adı" />
+            <RadzenDataGridColumn TItem="CustomerDTO" Property="CustomerSurname" Title="Müşteri Soyadı" />
+            <RadzenDataGridColumn TItem="CustomerDTO" Property="CardNumber" Title="Kart Numarası" />
+            <RadzenDataGridColumn TItem="CustomerDTO" Property="Company" Title="Şirket" />
+            <RadzenDataGridColumn TItem="CustomerDTO" Property="CreateDate" Title="Kayıt Tarihi">
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+
+}
+@code {
+    [Inject]
+    public HttpClient Client { get; set; }
+
+    [Inject]
+    ModalManager ModalManager { get; set; }
+
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+    [Inject]
+    ILocalStorageService localStorageService { get; set; }
+
+    protected IEnumerable<CustomerDTO> CustomerList;
+    protected async override Task OnInitializedAsync()
+    {
+        await LoadList();
+    }
+    protected async Task LoadList()
+    {
+        try
+        {
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            CustomerList = await Client.GetServiceResponseAsync<List<CustomerDTO>>("api/Customer/Customers", token, true);
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+        catch (Exception ex)
+        {
+            await ModalManager.ShowMessageAsync("Exception", ex.Message);
+        }
+    }
+    protected void goCreateCustomerPage()
+    {
+        NavigationManager.NavigateTo("/customers/add");
+    }
+
+    protected void goUpdateCustomerPage(Guid CustomerId)
+    {
+        NavigationManager.NavigateTo("/customers/edit/" + CustomerId);
+    }
+    protected async Task DeleteCustomer(Guid Id)
+    {
+        bool confirmed = await ModalManager.ConfirmationAsync("Confirmation", "Müşteriyi Silmek İstediğinize eminmisiniz ?");
+
+        if (!confirmed) return;
+
+        try
+        {
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            bool deleted = await Client.PostGetServiceResponseAsync<bool, Guid>("api/Customer/Delete", Id, token, true);
+
+            await LoadList();
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Product Deletion Error", ex.Message);
+        }
+        catch (Exception ex)
+        {
+            await ModalManager.ShowMessageAsync("An Error", ex.Message);
+        }
+    }
+}

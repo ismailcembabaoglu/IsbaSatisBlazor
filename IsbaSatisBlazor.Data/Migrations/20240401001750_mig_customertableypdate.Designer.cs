@@ -3,6 +3,7 @@ using System;
 using IsbaSatisBlazor.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IsbaSatisBlazor.Data.Migrations
 {
     [DbContext(typeof(IsbaSatisDbContext))]
-    partial class IsbaSatisDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240401001750_mig_customertableypdate")]
+    partial class mig_customertableypdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,9 +85,8 @@ namespace IsbaSatisBlazor.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<string>("PhoneAdressType")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("PhoneAdressType")
+                        .HasColumnType("integer");
 
                     b.HasIndex("CustomerId");
 
@@ -484,7 +486,7 @@ namespace IsbaSatisBlazor.Data.Migrations
                         new
                         {
                             Id = new Guid("065f9027-8f58-412c-a5a4-42fc3e80d15f"),
-                            CreateDate = new DateTime(2024, 4, 1, 23, 36, 8, 955, DateTimeKind.Utc).AddTicks(7532),
+                            CreateDate = new DateTime(2024, 4, 1, 0, 17, 50, 435, DateTimeKind.Utc).AddTicks(5682),
                             CreatedUser = "Admin",
                             RoleType = "Kullanıcı",
                             UserId = new Guid("822e044b-5656-4b44-ad0f-01d7761e2cbe")
@@ -524,7 +526,7 @@ namespace IsbaSatisBlazor.Data.Migrations
                         new
                         {
                             Id = new Guid("822e044b-5656-4b44-ad0f-01d7761e2cbe"),
-                            CreateDate = new DateTime(2024, 4, 1, 23, 36, 8, 955, DateTimeKind.Utc).AddTicks(7347),
+                            CreateDate = new DateTime(2024, 4, 1, 0, 17, 50, 435, DateTimeKind.Utc).AddTicks(5321),
                             CreatedUser = "Admin",
                             EMailAddress = "icb1742@gmail.com",
                             FirstName = "Süper",
