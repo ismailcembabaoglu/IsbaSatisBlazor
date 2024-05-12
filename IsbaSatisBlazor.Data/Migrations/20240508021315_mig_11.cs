@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace IsbaSatisBlazor.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class mig_postgregiris : Migration
+    public partial class mig_11 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,10 +21,10 @@ namespace IsbaSatisBlazor.Data.Migrations
                     UpdatedUser = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Decription = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    CustomerType = table.Column<int>(type: "integer", nullable: false),
+                    CustomerType = table.Column<string>(type: "text", nullable: false),
                     CustomerName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     CustomerSurname = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    Company = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Company = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     CardNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false)
                 },
                 constraints: table =>
@@ -170,7 +170,7 @@ namespace IsbaSatisBlazor.Data.Migrations
                     UpdatedUser = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Decription = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    PhoneAdressType = table.Column<int>(type: "integer", nullable: false),
+                    PhoneAdressType = table.Column<string>(type: "text", nullable: false),
                     City = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
                     County = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
                     District = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
@@ -496,6 +496,16 @@ namespace IsbaSatisBlazor.Data.Migrations
                         principalTable: "SupplementaryMaterials",
                         principalColumn: "Id");
                 });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "CreateDate", "CreatedUser", "Decription", "EMailAddress", "FirstName", "IsActive", "LastName", "Password", "UpdatedDate", "UpdatedUser" },
+                values: new object[] { new Guid("822e044b-5656-4b44-ad0f-01d7761e2cbe"), new DateTime(2024, 5, 8, 2, 13, 14, 895, DateTimeKind.Utc).AddTicks(4403), "Admin", null, "icb1742@gmail.com", "Süper", true, "Admin", "MTc0MjE3NDI=", null, null });
+
+            migrationBuilder.InsertData(
+                table: "UserRoles",
+                columns: new[] { "Id", "CreateDate", "CreatedUser", "Decription", "RoleType", "UpdatedDate", "UpdatedUser", "UserId" },
+                values: new object[] { new Guid("065f9027-8f58-412c-a5a4-42fc3e80d15f"), new DateTime(2024, 5, 8, 2, 13, 14, 895, DateTimeKind.Utc).AddTicks(4518), "Admin", null, "Kullanıcı", null, null, new Guid("822e044b-5656-4b44-ad0f-01d7761e2cbe") });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Addreses_CustomerId",

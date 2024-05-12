@@ -484,7 +484,7 @@ namespace IsbaSatisBlazor.Data.Migrations
                         new
                         {
                             Id = new Guid("065f9027-8f58-412c-a5a4-42fc3e80d15f"),
-                            CreateDate = new DateTime(2024, 4, 1, 23, 36, 8, 955, DateTimeKind.Utc).AddTicks(7532),
+                            CreateDate = new DateTime(2024, 5, 8, 2, 13, 14, 895, DateTimeKind.Utc).AddTicks(4518),
                             CreatedUser = "Admin",
                             RoleType = "Kullanıcı",
                             UserId = new Guid("822e044b-5656-4b44-ad0f-01d7761e2cbe")
@@ -524,7 +524,7 @@ namespace IsbaSatisBlazor.Data.Migrations
                         new
                         {
                             Id = new Guid("822e044b-5656-4b44-ad0f-01d7761e2cbe"),
-                            CreateDate = new DateTime(2024, 4, 1, 23, 36, 8, 955, DateTimeKind.Utc).AddTicks(7347),
+                            CreateDate = new DateTime(2024, 5, 8, 2, 13, 14, 895, DateTimeKind.Utc).AddTicks(4403),
                             CreatedUser = "Admin",
                             EMailAddress = "icb1742@gmail.com",
                             FirstName = "Süper",

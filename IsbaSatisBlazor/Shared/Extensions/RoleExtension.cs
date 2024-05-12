@@ -17,7 +17,7 @@ namespace IsbaSatisBlazor.Shared.Extensions
         public const string Adisyon = "Adisyonlar";
         public const string Customer = "Müşteriler";
         public const string Desk = "Masalar";
-        public const string DeskLocation = "MasaKonumu";
+        public const string DeskLocation = "MasaKonum";
         public const string Garson = "Garson";
         public const string PaymentMotion = "ÖdemeHareketi";
         public const string PaymentType = "ÖdemeTipi";

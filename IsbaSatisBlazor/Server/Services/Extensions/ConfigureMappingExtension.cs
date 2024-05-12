@@ -62,7 +62,7 @@ namespace IsbaSatisBlazor.Server.Services.Extensions
             CreateMap<Desk, DeskDTO>()
             .ForMember(c => c.DeskLocationName, y => y.MapFrom(z => z.DeskLocation.LocationName));
             CreateMap<DeskDTO, Desk>();
-
+            CreateMap<DeskLocation, DeskLocationDTO>().ReverseMap();
             CreateMap<Garson, GarsonDTO>();
             CreateMap<GarsonDTO, Garson>();
 

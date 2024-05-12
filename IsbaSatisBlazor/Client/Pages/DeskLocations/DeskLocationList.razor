@@ -1,0 +1,179 @@
+﻿@page "/desklocations"
+@using IsbaSatisBlazor.Data.Enums.Helper
+@using IsbaSatisBlazor.Data.Models
+@using IsbaSatisBlazor.Shared.Validators
+@using Morris.Blazor.FluentValidation
+@using Morris.Blazor.Validation
+    <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Masa Lokasyonu Ekle" Click="@InsertRowNote" Disabled=@(noteToInsert != null || noteToUpdate != null) />
+<RadzenDataGrid @ref="deskLocationGrid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                    Data="@deskLocationList" TItem="DeskLocationDTO" RowUpdate="@OnUpdateRowNote" RowCreate="@OnCreateRowNote" Sort="@ResetNote" Page="@ResetNote" Filter="@ResetNote" FilterMode="FilterMode.Simple" ColumnWidth="200px">
+        <Columns>
+            <RadzenDataGridColumn TItem="DeskLocationDTO" Context="DeskLocationDTO" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
+            <Template Context="DeskLocationDTO">
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRowNote(DeskLocationDTO))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRowNote(DeskLocationDTO))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                </Template>
+            <EditTemplate Context="DeskLocationDTO">
+                <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRowNote(DeskLocationDTO))">
+                    </RadzenButton>
+                <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEditNote(DeskLocationDTO))">
+                    </RadzenButton>
+                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRowNote(DeskLocationDTO))">
+                    </RadzenButton>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="DeskLocationDTO" Property="LocationName" Title="Masa Lokasyonu">
+            <EditTemplate Context="DeskLocationDTO">
+                <RadzenTextBox @bind-Value="DeskLocationDTO.LocationName" Style="width:100%; display: block" Name="LocationName" />
+                    @* <RadzenRequiredValidator Text="ShipName is required" Component="ShipName" Popup="true" /> *@
+                </EditTemplate>
+            </RadzenDataGridColumn>
+
+
+        </Columns>
+    </RadzenDataGrid>
+
+@code {
+    [Inject]
+    public HttpClient HttpClient { get; set; }
+
+    [Inject]
+    public ModalManager ModalManager { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+    [Inject]
+    ILocalStorageService localStorageService { get; set; }
+    RadzenDataGrid<DeskLocationDTO> deskLocationGrid;
+    private DeskLocationDTO DeskLocationModel = new DeskLocationDTO();
+    protected IEnumerable<DeskLocationDTO> deskLocationList;
+    DeskLocationDTO noteToInsert;
+    DeskLocationDTO noteToUpdate;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            deskLocationList = await HttpClient.GetServiceResponseAsync<List<DeskLocationDTO>>("api/DeskLocation/DeskLocations/", token, true);
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+        catch (Exception ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Exception", ex.Message);
+        }
+        
+    }
+    async Task DeleteRowNote(DeskLocationDTO deskLocation)
+    {
+        try
+        {
+            ResetNote();
+
+
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            bool deleted = await HttpClient.PostGetServiceResponseAsync<bool, Guid>("api/DeskLocation/Delete", deskLocation.Id, token, true);
+            await deskLocationGrid.Reload();
+            deskLocationList = await HttpClient.GetServiceResponseAsync<List<DeskLocationDTO>>("api/DeskLocation/DeskLocations/", token, true);
+            StateHasChanged();
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+        catch (Exception ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Exception", ex.Message);
+        }
+    
+
+    }
+    void CancelEditNote(DeskLocationDTO deskLocation)
+    {
+        ResetNote();
+
+        deskLocationGrid.CancelEditRow(deskLocation);
+    }
+    async Task SaveRowNote(DeskLocationDTO deskLocation)
+    {
+        await deskLocationGrid.UpdateRow(deskLocation);
+        noteToInsert = null;
+        await deskLocationGrid.Reload();
+        StateHasChanged();
+
+    }
+    async void OnUpdateRowNote(DeskLocationDTO deskLocation)
+    {
+        try
+        {
+            ResetNote();
+            deskLocation.UpdatedDate = DateTime.Now;
+            deskLocation.UpdatedUser = await localStorageService.GetItemAsStringAsync("email");
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            DeskLocationModel = await HttpClient.PostGetServiceResponseAsync<DeskLocationDTO, DeskLocationDTO>("api/DeskLocation/update", deskLocation, token, true);
+            await deskLocationGrid.Reload();
+            deskLocationList = await HttpClient.GetServiceResponseAsync<List<DeskLocationDTO>>("api/DeskLocation/DeskLocations/", token, true);
+            StateHasChanged();
+
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+        catch (Exception ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Exception", ex.Message);
+        }
+
+    }
+    async Task EditRowNote(DeskLocationDTO deskLocation)
+    {
+        noteToUpdate = deskLocation;
+        await deskLocationGrid.EditRow(deskLocation);
+    }
+    void ResetNote()
+    {
+        noteToInsert = null;
+        noteToUpdate = null;
+    }
+    async Task InsertRowNote()
+    {
+        noteToInsert = new DeskLocationDTO();
+        await deskLocationGrid.InsertRow(noteToInsert);
+        StateHasChanged();
+    }
+    async void OnCreateRowNote(DeskLocationDTO deskLocation)
+    {
+        try
+        {
+      
+            deskLocation.CreateDate = DateTime.Now;
+            deskLocation.CreatedUser = await localStorageService.GetItemAsStringAsync("email");
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            DeskLocationModel = await HttpClient.PostGetServiceResponseAsync<DeskLocationDTO, DeskLocationDTO>("api/DeskLocation/create", deskLocation, token, true);
+            noteToInsert = null;
+            await deskLocationGrid.Reload();
+            deskLocationList = await HttpClient.GetServiceResponseAsync<List<DeskLocationDTO>>("api/DeskLocation/DeskLocations/", token, true);
+            StateHasChanged();
+
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+        catch (Exception ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Exception", ex.Message);
+        }
+
+        // NavigationManager.NavigateTo("/products/edit/"+ProductId);
+    }
+}

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace IsbaSatisBlazor.Data.Enums.Helper
 {
-    public  class EnumHelper
+    public static class EnumHelper
     {
         public static List<KeyValuePair<string, int>> GetEnumDescriptionAndValues<T>()
         {

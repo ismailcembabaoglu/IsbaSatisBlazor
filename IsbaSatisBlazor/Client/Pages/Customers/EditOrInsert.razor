@@ -180,13 +180,11 @@
     protected override async Task OnInitializedAsync()
     {
         string token = await localStorageService.GetItemAsStringAsync("token");
-
         var ss = EnumHelper.GetEnumDescriptionAndValues<CustomerType>();
         foreach (var item in ss)
         {
             nameValues.Add(new CustomerTypeNameValue { Name = item.Key, Id = item.Value });
         }
-
         if (CustomerId != null && CustomerId != Guid.Empty)
         {
             try

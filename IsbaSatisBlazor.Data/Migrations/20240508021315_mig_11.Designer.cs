@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IsbaSatisBlazor.Data.Migrations
 {
     [DbContext(typeof(IsbaSatisDbContext))]
-    [Migration("20231221163301_mig_postgregiris")]
-    partial class mig_postgregiris
+    [Migration("20240508021315_mig_11")]
+    partial class mig_11
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -85,8 +85,9 @@ namespace IsbaSatisBlazor.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<int>("PhoneAdressType")
-                        .HasColumnType("integer");
+                    b.Property<string>("PhoneAdressType")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasIndex("CustomerId");
 
@@ -139,7 +140,6 @@ namespace IsbaSatisBlazor.Data.Migrations
                         .HasColumnType("character varying(20)");
 
                     b.Property<string>("Company")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
@@ -153,8 +153,9 @@ namespace IsbaSatisBlazor.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<int>("CustomerType")
-                        .HasColumnType("integer");
+                    b.Property<string>("CustomerType")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.ToTable("Customers", (string)null);
                 });
@@ -481,6 +482,16 @@ namespace IsbaSatisBlazor.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("065f9027-8f58-412c-a5a4-42fc3e80d15f"),
+                            CreateDate = new DateTime(2024, 5, 8, 2, 13, 14, 895, DateTimeKind.Utc).AddTicks(4518),
+                            CreatedUser = "Admin",
+                            RoleType = "Kullanıcı",
+                            UserId = new Guid("822e044b-5656-4b44-ad0f-01d7761e2cbe")
+                        });
                 });
 
             modelBuilder.Entity("IsbaSatisBlazor.Data.Models.Users", b =>
@@ -511,6 +522,19 @@ namespace IsbaSatisBlazor.Data.Migrations
                         .HasColumnType("character varying(250)");
 
                     b.ToTable("Users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("822e044b-5656-4b44-ad0f-01d7761e2cbe"),
+                            CreateDate = new DateTime(2024, 5, 8, 2, 13, 14, 895, DateTimeKind.Utc).AddTicks(4403),
+                            CreatedUser = "Admin",
+                            EMailAddress = "icb1742@gmail.com",
+                            FirstName = "Süper",
+                            IsActive = true,
+                            LastName = "Admin",
+                            Password = "MTc0MjE3NDI="
+                        });
                 });
 
             modelBuilder.Entity("IsbaSatisBlazor.Data.Models.Address", b =>

@@ -290,7 +290,7 @@
             portion.UpdatedUser = await localStorageService.GetItemAsStringAsync("email");
             string token = await localStorageService.GetItemAsStringAsync("token");
             portionModel = await HttpClient.PostGetServiceResponseAsync<PortionDTO, PortionDTO>("api/portion/update", portion, token, true);
-            await OnInitializedAsync();
+            await InvokeAsync(StateHasChanged);
         }
         catch (ApiException ex)
         {
@@ -309,7 +309,7 @@
             supplementaryMaterial.UpdatedUser = await localStorageService.GetItemAsStringAsync("email");
             string token = await localStorageService.GetItemAsStringAsync("token");
             supplementaryMaterialModel = await HttpClient.PostGetServiceResponseAsync<SupplementaryMaterialDTO, SupplementaryMaterialDTO>("api/SupplementaryMaterial/update", supplementaryMaterial, token, true);
-            await OnInitializedAsync();
+            await InvokeAsync(StateHasChanged);
         }
         catch (ApiException ex)
         {
@@ -329,7 +329,7 @@
             string token = await localStorageService.GetItemAsStringAsync("token");
             productNoteModel = await HttpClient.PostGetServiceResponseAsync<ProductNoteDTO, ProductNoteDTO>("api/ProductNote/update", productNote, token, true);
             await productNotesGrid.Reload();
-            await OnInitializedAsync();
+            await InvokeAsync(StateHasChanged);
 
         }
         catch (ApiException ex)
@@ -345,20 +345,20 @@
     {
         await portionsGrid.UpdateRow(portion);
         portionToInsert = null;
-        await OnInitializedAsync();
+        await InvokeAsync(StateHasChanged);
     }
     async Task SaveRowSupp(SupplementaryMaterialDTO supplementaryMaterial)
     {
         await supplementaryMaterialsGrid.UpdateRow(supplementaryMaterial);
         supplementaryMeterialToInsert = null;
-        await OnInitializedAsync();
+        await InvokeAsync(StateHasChanged);
     }
     async Task SaveRowNote(ProductNoteDTO productNote)
     {
         await productNotesGrid.UpdateRow(productNote);
         noteToInsert = null;
         await productNotesGrid.Reload();
-        await OnInitializedAsync();
+        await InvokeAsync(StateHasChanged);
 
     }
 
@@ -390,8 +390,9 @@
 
         string token = await localStorageService.GetItemAsStringAsync("token");
         bool deleted = await HttpClient.PostGetServiceResponseAsync<bool, Guid>("api/Portion/Delete", portion.Id, token, true);
-        await OnInitializedAsync();
+        portionList = await HttpClient.GetServiceResponseAsync<List<PortionDTO>>("api/portion/PortionsById/" + ProductId, token, true);
         await portionsGrid.Reload();
+        await InvokeAsync(StateHasChanged);
     }
     async Task DeleteRowSupp(SupplementaryMaterialDTO supplementaryMaterial)
     {
@@ -400,8 +401,9 @@
 
         string token = await localStorageService.GetItemAsStringAsync("token");
         bool deleted = await HttpClient.PostGetServiceResponseAsync<bool, Guid>("api/SupplementaryMaterial/Delete", supplementaryMaterial.Id, token, true);
-        await OnInitializedAsync();
+        supplementaryMaterialList = await HttpClient.GetServiceResponseAsync<List<SupplementaryMaterialDTO>>("api/SupplementaryMaterial/SupplementaryMaterialsById/" + ProductId, token, true);
         await supplementaryMaterialsGrid.Reload();
+        await InvokeAsync(StateHasChanged);
     }
     async Task DeleteRowNote(ProductNoteDTO productNote)
     {
@@ -411,7 +413,8 @@
         string token = await localStorageService.GetItemAsStringAsync("token");
         bool deleted = await HttpClient.PostGetServiceResponseAsync<bool, Guid>("api/SupplementaryMaterial/Delete", productNote.Id, token, true);
         await productNotesGrid.Reload();
-        await OnInitializedAsync();
+        productNoteList = await HttpClient.GetServiceResponseAsync<List<ProductNoteDTO>>("api/ProductNote/ProductNotesById/" + ProductId, token, true);
+        await InvokeAsync(StateHasChanged);
 
     }
 
@@ -420,16 +423,20 @@
     {
         portionToInsert = new PortionDTO();
         await portionsGrid.InsertRow(portionToInsert);
+        await InvokeAsync(StateHasChanged);
     }
     async Task InsertRowSupp()
     {
         supplementaryMeterialToInsert = new SupplementaryMaterialDTO();
         await supplementaryMaterialsGrid.InsertRow(supplementaryMeterialToInsert);
+        await InvokeAsync(StateHasChanged);
     }
     async Task InsertRowNote()
     {
         noteToInsert = new ProductNoteDTO();
         await productNotesGrid.InsertRow(noteToInsert);
+        await InvokeAsync(StateHasChanged);
+
     }
 
 
@@ -444,7 +451,8 @@
             string token = await localStorageService.GetItemAsStringAsync("token");
             portionModel = await HttpClient.PostGetServiceResponseAsync<PortionDTO, PortionDTO>("api/portion/create", portion, token, true);
             portionToInsert = null;
-            await OnInitializedAsync();
+            portionList = await HttpClient.GetServiceResponseAsync<List<PortionDTO>>("api/portion/PortionsById/" + ProductId, token, true);
+            await InvokeAsync(StateHasChanged);
         }
         catch (ApiException ex)
         {
@@ -464,6 +472,8 @@
             string token = await localStorageService.GetItemAsStringAsync("token");
             supplementaryMaterialModel = await HttpClient.PostGetServiceResponseAsync<SupplementaryMaterialDTO, SupplementaryMaterialDTO>("api/supplementarymaterial/create", supplementaryMaterial, token, true);
             portionToInsert = null;
+            supplementaryMaterialList = await HttpClient.GetServiceResponseAsync<List<SupplementaryMaterialDTO>>("api/SupplementaryMaterial/SupplementaryMaterialsById/" + ProductId, token, true);
+            await InvokeAsync(StateHasChanged);
         }
         catch (ApiException ex)
         {
@@ -483,8 +493,10 @@
             string token = await localStorageService.GetItemAsStringAsync("token");
             productNoteModel = await HttpClient.PostGetServiceResponseAsync<ProductNoteDTO, ProductNoteDTO>("api/productnote/create", productNote, token, true);
             noteToInsert = null;
+            productNoteList = await HttpClient.GetServiceResponseAsync<List<ProductNoteDTO>>("api/ProductNote/ProductNotesById/" + ProductId, token, true);
+            await InvokeAsync(StateHasChanged);
             await productNotesGrid.Reload();
-            await OnInitializedAsync();
+          
 
         }
         catch (ApiException ex)

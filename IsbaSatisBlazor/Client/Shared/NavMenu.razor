@@ -39,6 +39,10 @@
                 <AuthorizeView Roles="@RoleExtension.User" Context="innercontext">
                     <RadzenPanelMenuItem Text="Kullanıcı Listesi" Path="/userlist" Icon="account_circle" />
                 </AuthorizeView>
+
+                <AuthorizeView Roles="@RoleExtension.DeskLocation" Context="innercontext">
+                    <RadzenPanelMenuItem Text="Masalar Ve Masa Lokasyonu" Path="/desklocations" Icon="event_seat" />
+                </AuthorizeView>
                 <RadzenPanelMenuItem Text="Çıkış Yap" Path="/logout" Icon="input" />
                 @*  <RadzenPanelMenuItem Text="UI Fundamentals" Icon="auto_awesome">
                 <RadzenPanelMenuItem Text="Themes" Icon="color_lens" />
