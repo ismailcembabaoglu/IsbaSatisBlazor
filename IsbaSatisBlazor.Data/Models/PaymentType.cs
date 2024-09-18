@@ -10,7 +10,7 @@ namespace IsbaSatisBlazor.Data.Models
     public class PaymentType:ModelBase
     {
         public string PaymentName { get; set; }
-        public virtual ICollection<PaymentMotion> PaymentMotions { get; set; }
+        public virtual ICollection<PaymentMotion>? PaymentMotions { get; set; }
 
     }
 }

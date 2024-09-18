@@ -13,6 +13,6 @@ namespace IsbaSatisBlazor.Data.Models
         public PhoneAdressType PhoneAdressType { get; set; }
         public string PhoneNumber { get; set; }
         public Guid CustomerId { get; set; }
-        public virtual Customer Customer { get; set; }
+        public virtual Customer? Customer { get; set; }
     }
 }

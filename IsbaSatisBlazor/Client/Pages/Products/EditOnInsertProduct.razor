@@ -92,7 +92,6 @@
                     </RadzenButton>
                 </EditTemplate>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="SupplementaryMaterialDTO" Property="Id" Title="Id" Width="120px" />
             <RadzenDataGridColumn TItem="SupplementaryMaterialDTO" Property="SupplementaryMaterialName" Title="Ek Malzeme Adı">
                 <EditTemplate Context="SupplementaryMaterialDTO">
                     <RadzenTextBox @bind-Value="SupplementaryMaterialDTO.SupplementaryMaterialName" Style="width:100%; display: block" Name="Adı" />
@@ -131,7 +130,6 @@
                     </RadzenButton>
                 </EditTemplate>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="PortionDTO" Property="Id" Title="Id" Width="120px" />
             <RadzenDataGridColumn TItem="PortionDTO" Property="Name" Title="Porsiyon Adı">
                 <EditTemplate Context="PortionDTO">
                     <RadzenTextBox @bind-Value="PortionDTO.Name" Style="width:100%; display: block" Name="Adı" />
@@ -150,7 +148,7 @@
                     @* <RadzenRequiredValidator Text="ShipName is required" Component="ShipName" Popup="true" /> *@
                 </EditTemplate>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="PortionDTO" Property="GroupName" Title="Birim">
+            <RadzenDataGridColumn TItem="PortionDTO" Property="UnitGroupName" Title="Birim">
                 <EditTemplate Context="PortionDTO">
                     <RadzenDropDown @bind-Value="PortionDTO.UnitId" Data="@UnitList" TextProperty="GroupName" ValueProperty="Id" Style="width:100%; display: block;" />
                     @* <RadzenRequiredValidator Text="ShipName is required" Component="ShipName" Popup="true" /> *@
@@ -182,7 +180,6 @@
                     </RadzenButton>
                 </EditTemplate>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="ProductNoteDTO" Property="Id" Title="Id" Width="120px" />
             <RadzenDataGridColumn TItem="ProductNoteDTO" Property="Note" Title="Not">
                 <EditTemplate Context="ProductNoteDTO">
                     <RadzenTextBox @bind-Value="ProductNoteDTO.Note" Style="width:100%; display: block" Name="Adı" />

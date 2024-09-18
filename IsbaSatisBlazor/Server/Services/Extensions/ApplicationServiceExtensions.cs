@@ -15,6 +15,7 @@ namespace IsbaSatisBlazor.Server.Services.Extensions
             service.AddScoped<IUnitService, UnitService>();
             service.AddScoped<IPortionService, PortionService>();
             service.AddScoped<ISupplementaryMaterialService, SupplementaryMaterialService>();
+            service.AddScoped<IPaymentTypeService, PaymentTypeService>();
             service.AddScoped<IProductNoteService, ProductNoteService>();
             service.AddScoped<ILinktestService, LinktestService>();
             service.AddScoped<IAdisyonSevice, AdisyonSevice>();

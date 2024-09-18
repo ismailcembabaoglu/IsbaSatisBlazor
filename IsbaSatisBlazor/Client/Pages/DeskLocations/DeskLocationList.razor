@@ -4,12 +4,15 @@
 @using IsbaSatisBlazor.Shared.Validators
 @using Morris.Blazor.FluentValidation
 @using Morris.Blazor.Validation
+@inject Radzen.DialogService DialogService
+@inject TooltipService tooltipService
     <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Masa Lokasyonu Ekle" Click="@InsertRowNote" Disabled=@(noteToInsert != null || noteToUpdate != null) />
 <RadzenDataGrid @ref="deskLocationGrid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="DataGridEditMode.Single"
                     Data="@deskLocationList" TItem="DeskLocationDTO" RowUpdate="@OnUpdateRowNote" RowCreate="@OnCreateRowNote" Sort="@ResetNote" Page="@ResetNote" Filter="@ResetNote" FilterMode="FilterMode.Simple" ColumnWidth="200px">
         <Columns>
             <RadzenDataGridColumn TItem="DeskLocationDTO" Context="DeskLocationDTO" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
             <Template Context="DeskLocationDTO">
+                <RadzenButton Icon="event_seat" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Flat" Size="ButtonSize.Medium" MouseEnter="@(args => ShowTooltip("Masalar Ekranı",args, new TooltipOptions(){ Position = TooltipPosition.Top }))"  Click="@(()=>OpenDeskList(DeskLocationDTO.Id))"></RadzenButton>
                 <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRowNote(DeskLocationDTO))" @onclick:stopPropagation="true">
                     </RadzenButton>
                 <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRowNote(DeskLocationDTO))" @onclick:stopPropagation="true">
@@ -69,6 +72,14 @@
         }
         
     }
+        public async Task OpenDeskList(Guid deskLocationId)
+    {
+        
+        await DialogService.OpenAsync("Masa Ekleme Ekranı", ds =>
+        @<IsbaSatisBlazor.Client.Pages.Desks.DeskList DeskLocationId="deskLocationId" />,
+        new DialogOptions() { CloseDialogOnEsc = true, Width = "60%", Height = "80%",CloseDialogOnOverlayClick=true, ShowClose = true, Resizable = false, AutoFocusFirstElement = true, Draggable = false, ShowTitle = true });
+    }
+    void ShowTooltip(string name,ElementReference elementReference, TooltipOptions options = null) => tooltipService.Open(elementReference, name, options);
     async Task DeleteRowNote(DeskLocationDTO deskLocation)
     {
         try

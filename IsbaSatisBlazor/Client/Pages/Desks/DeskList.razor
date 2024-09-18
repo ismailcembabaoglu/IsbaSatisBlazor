@@ -1,0 +1,189 @@
+﻿
+@inject Radzen.DialogService Dialog
+@layout EmptyLayout
+<RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Masa Ekle" Click="@InsertRowdesk" Disabled=@(deskToInsert != null || deskToUpdate != null) />
+<RadzenDataGrid @ref="deskGrid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                Data="@deskList" TItem="DeskDTO" RowUpdate="@OnUpdateRowdesk" RowCreate="@OnCreateRowdesk" Sort="@Resetdesk" Page="@Resetdesk" Filter="@Resetdesk" FilterMode="FilterMode.Simple" ColumnWidth="200px">
+    <Columns>
+        <RadzenDataGridColumn TItem="DeskDTO" Context="DeskDTO" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
+            <Template Context="DeskDTO">
+                <RadzenButton Icon="event_seat" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Flat" Size="ButtonSize.Medium"></RadzenButton>
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRowdesk(DeskDTO))" @onclick:stopPropagation="true">
+                </RadzenButton>
+                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRowdesk(DeskDTO))" @onclick:stopPropagation="true">
+                </RadzenButton>
+            </Template>
+            <EditTemplate Context="DeskDTO">
+                <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRowdesk(DeskDTO))">
+                </RadzenButton>
+                <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEditdesk(DeskDTO))">
+                </RadzenButton>
+                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRowdesk(DeskDTO))">
+                </RadzenButton>
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="DeskDTO" Property="Name" Title="Masa Adı">
+            <EditTemplate Context="DeskDTO">
+                <RadzenTextBox @bind-Value="DeskDTO.Name" Style="width:100%; display: block" Name="Name" />
+                @* <RadzenRequiredValidator Text="ShipName is required" Component="ShipName" Popup="true" /> *@
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="DeskDTO" Property="Capacity" Title="Masa Kapasitesi">
+            <EditTemplate Context="DeskDTO">
+                <RadzenNumeric @bind-Value="DeskDTO.Capacity" Style="width:100%; display: block" Name="Capacity" />
+                @* <RadzenRequiredValidator Text="ShipName is required" Component="ShipName" Popup="true" /> *@
+            </EditTemplate>
+        </RadzenDataGridColumn>
+
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    [Parameter]
+    public Guid DeskLocationId { get; set; }
+    [Inject]
+    public HttpClient HttpClient { get; set; }
+
+    [Inject]
+    public ModalManager ModalManager { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+    [Inject]
+    ILocalStorageService localStorageService { get; set; }
+    RadzenDataGrid<DeskDTO> deskGrid;
+    private DeskDTO deskModel = new DeskDTO();
+    protected IEnumerable<DeskDTO> deskList;
+    DeskDTO deskToInsert;
+    DeskDTO deskToUpdate;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            deskList = await HttpClient.GetServiceResponseAsync<List<DeskDTO>>("api/Desk/DesksById/"+DeskLocationId, token, true);
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+        catch (Exception ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Exception", ex.Message);
+        }
+
+    }
+    async Task DeleteRowdesk(DeskDTO desk)
+    {
+        try
+        {
+            Resetdesk();
+
+
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            bool deleted = await HttpClient.PostGetServiceResponseAsync<bool, Guid>("api/Desk/Delete", desk.Id, token, true);
+            await deskGrid.Reload();
+            deskList = await HttpClient.GetServiceResponseAsync<List<DeskDTO>>("api/Desk/DesksById/" + DeskLocationId, token, true);
+            StateHasChanged();
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+        catch (Exception ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Exception", ex.Message);
+        }
+
+
+    }
+    void CancelEditdesk(DeskDTO desk)
+    {
+        Resetdesk();
+
+        deskGrid.CancelEditRow(desk);
+    }
+    async Task SaveRowdesk(DeskDTO desk)
+    {
+        await deskGrid.UpdateRow(desk);
+        deskToInsert = null;
+        await deskGrid.Reload();
+        StateHasChanged();
+
+    }
+    async void OnUpdateRowdesk(DeskDTO desk)
+    {
+        try
+        {
+            Resetdesk();
+            desk.UpdatedDate = DateTime.Now;
+            desk.UpdatedUser = await localStorageService.GetItemAsStringAsync("email");
+            desk.IsFull = false;
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            deskModel = await HttpClient.PostGetServiceResponseAsync<DeskDTO, DeskDTO>("api/desk/update", desk, token, true);
+            await deskGrid.Reload();
+            deskList = await HttpClient.GetServiceResponseAsync<List<DeskDTO>>("api/Desk/DesksById/" + DeskLocationId, token, true);
+            StateHasChanged();
+
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+        catch (Exception ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Exception", ex.Message);
+        }
+
+    }
+    async Task EditRowdesk(DeskDTO desk)
+    {
+        deskToUpdate = desk;
+        await deskGrid.EditRow(desk);
+    }
+    void Resetdesk()
+    {
+        deskToInsert = null;
+        deskToUpdate = null;
+    }
+    async Task InsertRowdesk()
+    {
+        deskToInsert = new DeskDTO();
+        await deskGrid.InsertRow(deskToInsert);
+        StateHasChanged();
+    }
+    async void OnCreateRowdesk(DeskDTO desk)
+    {
+        try
+        {
+
+            desk.CreateDate = DateTime.Now;
+            desk.CreatedUser = await localStorageService.GetItemAsStringAsync("email");
+            desk.DeskLocationId = DeskLocationId;
+            desk.IsFull = false;
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            deskModel = await HttpClient.PostGetServiceResponseAsync<DeskDTO, DeskDTO>("api/desk/create", desk, token, true);
+            deskToInsert = null;
+            await deskGrid.Reload();
+            deskList = await HttpClient.GetServiceResponseAsync<List<DeskDTO>>("api/Desk/DesksById/" + DeskLocationId, token, true);
+            StateHasChanged();
+
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+        catch (Exception ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Exception", ex.Message);
+        }
+
+        // NavigationManager.NavigateTo("/products/edit/"+ProductId);
+    }
+
+
+}

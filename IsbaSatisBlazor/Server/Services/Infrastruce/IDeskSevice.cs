@@ -7,7 +7,7 @@ namespace IsbaSatisBlazor.Server.Services.Infrastruce
         public Task<DeskDTO> GetDeskById(Guid Id);
 
         public Task<List<DeskDTO>> GetDesks();
-        public Task<List<DeskDTO>> GetDesksById(Guid Id);
+        public Task<List<DeskDTO>> GetDesksById(Guid DeskLocationId);
 
         public Task<DeskDTO> CreateDesk(DeskDTO Desk);
 

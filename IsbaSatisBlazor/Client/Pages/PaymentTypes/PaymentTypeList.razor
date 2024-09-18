@@ -1,0 +1,182 @@
+﻿@page "/paymenttypes"
+@using IsbaSatisBlazor.Data.Enums.Helper
+@using IsbaSatisBlazor.Data.Models
+@using IsbaSatisBlazor.Shared.Validators
+@using Morris.Blazor.FluentValidation
+@using Morris.Blazor.Validation
+@inject Radzen.DialogService DialogService
+@inject TooltipService tooltipService
+<RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Ödeme Türü Ekle" Click="@InsertRowPaymentType" Disabled=@(PaymentTypeToInsert != null || PaymentTypeToUpdate != null) />
+<RadzenDataGrid @ref="paymentTypeGrid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                Data="@paymentTypeList" TItem="PaymentTypeDTO" RowUpdate="@OnUpdateRowPaymentType" RowCreate="@OnCreateRowPaymentType" Sort="@ResetPaymentType" Page="@ResetPaymentType" Filter="@ResetPaymentType" FilterMode="FilterMode.Simple" ColumnWidth="200px">
+    <Columns>
+        <RadzenDataGridColumn TItem="PaymentTypeDTO" Context="PaymentTypeDTO" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
+            <Template Context="PaymentTypeDTO">
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRowPaymentType(PaymentTypeDTO))" @onclick:stopPropagation="true">
+                </RadzenButton>
+                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRowPaymentType(PaymentTypeDTO))" @onclick:stopPropagation="true">
+                </RadzenButton>
+            </Template>
+            <EditTemplate Context="PaymentTypeDTO">
+                <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRowPaymentType(PaymentTypeDTO))">
+                </RadzenButton>
+                <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEditPaymentType(PaymentTypeDTO))">
+                </RadzenButton>
+                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRowPaymentType(PaymentTypeDTO))">
+                </RadzenButton>
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="PaymentTypeDTO" Property="PaymentName" Title="Ödeme Türü Adı">
+            <EditTemplate Context="PaymentTypeDTO">
+                <RadzenTextBox @bind-Value="PaymentTypeDTO.PaymentName" Style="width:100%; display: block" Name="PaymentName" />
+                @* <RadzenRequiredValidator Text="ShipName is required" Component="ShipName" Popup="true" /> *@
+            </EditTemplate>
+        </RadzenDataGridColumn>
+
+
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    [Inject]
+    public HttpClient HttpClient { get; set; }
+
+    [Inject]
+    public ModalManager ModalManager { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+    [Inject]
+    ILocalStorageService localStorageService { get; set; }
+    RadzenDataGrid<PaymentTypeDTO> paymentTypeGrid;
+    private PaymentTypeDTO paymentTypeModel = new PaymentTypeDTO();
+    protected IEnumerable<PaymentTypeDTO> paymentTypeList;
+    PaymentTypeDTO PaymentTypeToInsert;
+    PaymentTypeDTO PaymentTypeToUpdate;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            paymentTypeList = await HttpClient.GetServiceResponseAsync<List<PaymentTypeDTO>>("api/paymenttype/paymenttypes/", token, true);
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+        catch (Exception ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Exception", ex.Message);
+        }
+
+    }
+    void ShowTooltip(string name, ElementReference elementReference, TooltipOptions options = null) => tooltipService.Open(elementReference, name, options);
+    async Task DeleteRowPaymentType(PaymentTypeDTO paymentType)
+    {
+        try
+        {
+            ResetPaymentType();
+
+
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            bool deleted = await HttpClient.PostGetServiceResponseAsync<bool, Guid>("api/paymenttype/Delete", paymentType.Id, token, true);
+            await paymentTypeGrid.Reload();
+            paymentTypeList = await HttpClient.GetServiceResponseAsync<List<PaymentTypeDTO>>("api/paymenttype/paymenttypes/", token, true);
+            StateHasChanged();
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+        catch (Exception ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Exception", ex.Message);
+        }
+
+
+    }
+    void CancelEditPaymentType(PaymentTypeDTO paymentType)
+    {
+        ResetPaymentType();
+
+        paymentTypeGrid.CancelEditRow(paymentType);
+    }
+    async Task SaveRowPaymentType(PaymentTypeDTO paymentType)
+    {
+        await paymentTypeGrid.UpdateRow(paymentType);
+        PaymentTypeToInsert = null;
+        await paymentTypeGrid.Reload();
+        StateHasChanged();
+
+    }
+    async void OnUpdateRowPaymentType(PaymentTypeDTO paymentType)
+    {
+        try
+        {
+            ResetPaymentType();
+            paymentType.UpdatedDate = DateTime.Now;
+            paymentType.UpdatedUser = await localStorageService.GetItemAsStringAsync("email");
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            paymentTypeModel = await HttpClient.PostGetServiceResponseAsync<PaymentTypeDTO, PaymentTypeDTO>("api/paymenttype/update", paymentType, token, true);
+            await paymentTypeGrid.Reload();
+            paymentTypeList = await HttpClient.GetServiceResponseAsync<List<PaymentTypeDTO>>("api/paymenttype/paymenttypes/", token, true);
+            StateHasChanged();
+
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+        catch (Exception ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Exception", ex.Message);
+        }
+
+    }
+    async Task EditRowPaymentType(PaymentTypeDTO paymentType)
+    {
+        PaymentTypeToUpdate = paymentType;
+        await paymentTypeGrid.EditRow(paymentType);
+    }
+    void ResetPaymentType()
+    {
+        PaymentTypeToInsert = null;
+        PaymentTypeToUpdate = null;
+    }
+    async Task InsertRowPaymentType()
+    {
+        PaymentTypeToInsert = new PaymentTypeDTO();
+        await paymentTypeGrid.InsertRow(PaymentTypeToInsert);
+        StateHasChanged();
+    }
+    async void OnCreateRowPaymentType(PaymentTypeDTO paymentType)
+    {
+        try
+        {
+
+            paymentType.CreateDate = DateTime.Now;
+            paymentType.CreatedUser = await localStorageService.GetItemAsStringAsync("email");
+            string token = await localStorageService.GetItemAsStringAsync("token");
+            paymentTypeModel = await HttpClient.PostGetServiceResponseAsync<PaymentTypeDTO, PaymentTypeDTO>("api/paymenttype/create", paymentType, token, true);
+            PaymentTypeToInsert = null;
+            await paymentTypeGrid.Reload();
+            paymentTypeList = await HttpClient.GetServiceResponseAsync<List<PaymentTypeDTO>>("api/paymentType/paymenttypes/", token, true);
+            StateHasChanged();
+
+        }
+        catch (ApiException ex)
+        {
+            await ModalManager.ShowMessageAsync("Api Exception", ex.Message);
+        }
+        catch (Exception ex)
+        {
+
+            await ModalManager.ShowMessageAsync("Exception", ex.Message);
+        }
+
+        // NavigationManager.NavigateTo("/products/edit/"+ProductId);
+    }
+}

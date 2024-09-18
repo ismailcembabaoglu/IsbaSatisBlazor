@@ -34,7 +34,9 @@
                     <RadzenPanelMenuItem Text="Müşteri Listesi" Path="/customers" Icon="account_box" />
                 </AuthorizeView>
 
-
+                <AuthorizeView Roles="@RoleExtension.PaymentType" Context="innercontext">
+                    <RadzenPanelMenuItem Text="Ödeme Türü Listesi" Path="/paymenttypes" Icon="euro_symbol" />
+                </AuthorizeView>
 
                 <AuthorizeView Roles="@RoleExtension.User" Context="innercontext">
                     <RadzenPanelMenuItem Text="Kullanıcı Listesi" Path="/userlist" Icon="account_circle" />

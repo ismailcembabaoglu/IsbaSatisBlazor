@@ -64,10 +64,10 @@ namespace IsbaSatisBlazor.Server.Services.Services
                     .ToListAsync();
         }
 
-        public async Task<List<DeskDTO>> GetDesksById(Guid Id)
+        public async Task<List<DeskDTO>> GetDesksById(Guid DeskLocationId)
         {
             return await context.Desks.Include(c => c.DeskLocation)
-                      .Where(c => c.DeskLocationId == Id)
+                      .Where(c => c.DeskLocationId == DeskLocationId)
                       .ProjectTo<DeskDTO>(mapper.ConfigurationProvider)
                       .ToListAsync();
         }

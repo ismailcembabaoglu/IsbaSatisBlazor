@@ -52,6 +52,14 @@ namespace IsbaSatisBlazor.Server.Controllers
                 Value = await deskService.GetDeskById(Id)
             };
         }
+        [HttpGet("DesksById/{DeskLocationId}")]
+        public async Task<ServiceResponse<List<DeskDTO>>> GetDesksById(Guid DeskLocationId)
+        {
+            return new ServiceResponse<List<DeskDTO>>()
+            {
+                Value = await deskService.GetDesksById(DeskLocationId)
+            };
+        }
         [HttpPost("Delete")]
         public async Task<ServiceResponse<bool>> DeleteDeskId([FromBody] Guid id)
         {
